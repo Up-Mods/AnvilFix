@@ -1,0 +1,254 @@
+import java.nio.charset.StandardCharsets
+import java.time.Year
+
+plugins {
+    id "fabric-loom" version "0.2.0-SNAPSHOT"
+    id "net.minecrell.licenser" version "0.2.1"
+    id "com.matthewprenger.cursegradle" version "1.1.2"
+    id "maven-publish"
+}
+
+sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
+
+group = "com.github.NerdHubMC"
+archivesBaseName = "AnvilFix"
+version = "${mod_version}"
+
+minecraft {
+}
+
+processResources {
+    // this will ensure that this task is redone when there"s a change
+    inputs.property "version", project.version
+
+    // replace stuff in fabric.mod.json, nothing else
+    from(sourceSets.main.resources.srcDirs) {
+        include "fabric.mod.json"
+
+        // add mod metadata
+        expand "version": project.version
+    }
+
+    // copy everything else, that"s not the mcmod.info
+    from(sourceSets.main.resources.srcDirs) {
+        exclude "fabric.mod.json"
+    }
+}
+
+repositories {
+    maven {
+        name = "NerdHubMC"
+        url = "https://maven.abusedmaster.xyz"
+    }
+    maven {
+        name = "CurseForge"
+        url = "https://minecraft.curseforge.com/api/maven"
+    }
+    maven {
+        name = "JitPack"
+        url = "https://jitpack.io"
+    }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+    mappings "net.fabricmc:yarn:${yarn_mappings}"
+    modCompile "net.fabricmc:fabric-loader:${loader_version}"
+
+    //optional dependency!
+    modCompile "net.fabricmc:fabric:${fabric_version}"
+
+    compileOnly "com.google.code.findbugs:jsr305:${findbugs_version}"
+}
+
+compileJava {
+    options.encoding = StandardCharsets.UTF_8.name()
+}
+
+if (JavaVersion.current().isJava8Compatible()) {
+    allprojects {
+        tasks.withType(Javadoc) {
+            options.addStringOption("Xdoclint:none", "-quiet")
+        }
+    }
+}
+
+jar {
+    from "LICENSE.md"
+    manifest.mainAttributes(
+            "Implementation-Title": project.archivesBaseName,
+            "Implementation-Version": project.version,
+            "Maven-Artifact": "${project.group}:${project.name}:${project.version}".toLowerCase(Locale.ROOT),
+            "Built-On-Minecraft": "${minecraft_version}",
+            "Built-On-Java": "${System.getProperty("java.vm.version")} (${System.getProperty("java.vm.vendor")})"
+    )
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    from sourceSets.main.allSource
+    classifier = "sources"
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    from javadoc.destinationDir
+    from "LICENSE.md"
+    classifier = "javadoc"
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact jar
+            artifact javadocJar
+            artifact sourcesJar
+            pom {
+                name = "AnvilFix"
+                url = "https://github.com/NerdHubMC/AnvilFix"
+                licenses {
+                    license {
+                        name = "MIT License"
+                        url = "https://github.com/NerdHubMC/AnvilFix/blob/master/LICENSE.md"
+                    }
+                }
+                scm {
+                    url = "https://github.com/NerdHubMC/AnvilFix"
+                    connection = "scm:git:git://github.com/NerdHubMC/AnvilFix.git"
+                    developerConnection = "scm:git:git@github.com:NerdHubMC/AnvilFix.git"
+                }
+                issueManagement {
+                    system = "github"
+                    url = "https://github.com/NerdHubMC/AnvilFix/issues"
+                }
+            }
+        }
+    }
+
+    repositories {
+        //mavenLocal() //uncomment this to publish to the local maven
+
+        //publish to the nerdhub maven if credentials are set
+        if (project.hasProperty("nerdhub_maven_user")) {
+            maven {
+                name = "NerdHub"
+                url = findProperty("nerdhub_maven_url")
+                credentials {
+                    username = findProperty("nerdhub_maven_user")
+                    password = findProperty("nerdhub_maven_pass")
+                }
+                authentication {
+                    basic(BasicAuthentication)
+                }
+            }
+        }
+    }
+}
+
+curseforge {
+    if (project.hasProperty("curse_key")) {
+        apiKey = findProperty("curse_key")
+    }
+
+    if (project.hasProperty("curseforge_id")) {
+        project {
+            id = findProperty("curseforge_id")
+            mainArtifact(jar) {
+                displayName = "${project.archivesBaseName} MC${minecraft_version} v${mod_version}"
+            }
+            releaseType = project.release_type
+
+            //TODO remove when MC 1.14 releases
+            //usually automatically determined by the CurseGradle plugin
+            addGameVersion '1.14-Snapshot'
+
+            changelogType = "markdown"
+            changelog = getChangelogText()
+
+            relations {
+                optionalDependency 'fabric'
+            }
+
+            addArtifact javadocJar
+            addArtifact sourcesJar
+        }
+        options {
+            forgeGradleIntegration = false
+        }
+
+    }
+}
+
+license {
+    header = file("code_quality/${license_header}_HEADER.txt")
+    // Apply licenses only to main source set
+    sourceSets = [project.sourceSets.main]
+    include "**/*.java"
+    charset = StandardCharsets.UTF_8.name()
+
+    style {
+        java = "BLOCK_COMMENT"
+    }
+    newLine = false // Disables the empty line between the header and package name
+    //ignoreFailures = true //Ignore failures and only print a warning on license violations
+
+    //export variables
+    ext {
+        year = Year.now()
+        projectDisplayName = project.archivesBaseName
+    }
+}
+
+afterEvaluate {
+    //make curseforge task depend on build
+    String curseID = findProperty(curseforge_id);
+    if (curseID != null) {
+        tasks.each {
+            if (it.name == "curseforge" + curseID) {
+                it.dependsOn remapJar, remapSourcesJar
+            }
+        }
+    }
+}
+
+String getChangelogText() {
+    def changelogFile = new File(project.projectDir, "changelog.md")
+    String str = ''
+    if(!changelogFile.exists()) {
+        System.out.println("No changelog file found, creating one at \"" + changelogFile.getAbsolutePath() + "\"")
+        changelogFile.createNewFile()
+        String newText = '------------------------------------------------------\n' +
+                'Version ' + project.version + '\n' +
+                '------------------------------------------------------\n' +
+                'Additions\n' +
+                '- None\n' +
+                '\n' +
+                'Changes\n' +
+                '- None\n' +
+                '\n' +
+                'Bug Fixes\n' +
+                '- None\n'
+        String oldText = changelogFile.getText()
+        changelogFile.setText(newText + oldText)
+        return str
+    }
+    String separator = '---'
+    int lineCount = 0
+    boolean done = false
+    changelogFile.eachLine {
+        if (done || it == null) {
+            return
+        }
+        if (lineCount < 3) {
+            lineCount++
+            if (it.startsWith(separator)) {
+                return ""
+            }
+        }
+        if (!it.startsWith(separator)) {
+            str += "$it" + (lineCount < 3 ? ':\n\n' : '\n')
+            return
+        }
+        done = true // once we go past the first version block, parse no more
+    }
+    str += "\n\n see full changelog [here](" + findProperty("changelog_url") + " \"Changelog\")"
+    return str
+}

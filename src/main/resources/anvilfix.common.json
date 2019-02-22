@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "package": "nerdhub.anvilfix.mixin.common",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "MixinAnvilContainer",
+    "MixinItemStack"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

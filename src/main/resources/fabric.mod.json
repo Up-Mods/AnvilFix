@@ -1,0 +1,14 @@
+{
+    "id": "anvil_fix",
+    "name": "AnvilFix",
+    "description": "tweaks for the Anvil",
+    "version": "${version}",
+    "side": "universal",
+    "initializers": [
+        "nerdhub.anvilfix.AnvilFix"
+    ],
+    "mixins": {
+        "client": "anvilfix.client.json",
+        "common": "anvilfix.common.json"
+    }
+}
