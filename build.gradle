@@ -98,9 +98,13 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            artifact jar
+            artifact (jar) {
+                builtBy remapJar
+            }
             artifact javadocJar
-            artifact sourcesJar
+            artifact (sourcesJar) {
+                builtBy remapSourcesJar
+            }
             pom {
                 name = "AnvilFix"
                 url = "https://github.com/NerdHubMC/AnvilFix"
