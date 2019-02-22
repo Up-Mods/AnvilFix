@@ -1,5 +1,5 @@
 # AnvilFix [![Project](http://cf.way2muchnoise.eu/full_305480_downloads.svg)](https://minecraft.curseforge.com/projects/305480)
-modding library, feel free to use
+removes the level limit for Anvils, as well as the incremental repair cost (configurable)
 
 [![Maven Repository](https://img.shields.io/maven-metadata/v/https/maven.abusedmaster.xyz/com/github/NerdHubMC/AnvilFix/maven-metadata.xml.svg)](https://maven.abusedmaster.xyz/com/github/NerdHubMC/AnvilFix "NerdHubMC Maven") [![JitPack](https://jitpack.io/v/NerdHubMC/AnvilFix.svg)](https://jitpack.io/#NerdHubMC/AnvilFix "Jitpack")
 ---
