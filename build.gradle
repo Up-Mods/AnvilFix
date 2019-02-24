@@ -146,6 +146,7 @@ publishing {
         }
     }
 }
+tasks.publish.dependsOn build
 
 curseforge {
     if (project.hasProperty("curse_key")) {
@@ -156,7 +157,7 @@ curseforge {
         project {
             id = findProperty("curseforge_id")
             mainArtifact(jar) {
-                displayName = "${project.archivesBaseName} MC${minecraft_version} v${mod_version}"
+                displayName = "${project.archivesBaseName} MC${project.minecraft_version} v${project.mod_version}"
             }
             releaseType = project.release_type
 
