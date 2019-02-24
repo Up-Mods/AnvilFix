@@ -1,0 +1,10 @@
+[{
+    "modid": "anvilfix",
+    "name": "AnvilFix",
+    "description": "Removes the level limit of combining Items in an Anvil",
+    "version": "${version}",
+    "mcversion": "1.12.2",
+	"url": "",
+    "authorList": ["UpcraftLP","TheRealp455w0rd"],
+    "logoFile": ""
+}]
