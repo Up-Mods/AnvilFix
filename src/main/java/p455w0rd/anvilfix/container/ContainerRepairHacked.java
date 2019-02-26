@@ -4,17 +4,18 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
+import net.minecraft.block.BlockAnvil;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.inventory.ContainerRepair;
-import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.*;
 import net.minecraft.item.ItemEnchantedBook;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import p455w0rd.anvilfix.init.ModConfig.Options;
@@ -23,57 +24,165 @@ import p455w0rd.anvilfix.init.ModConfig.Options;
  * @author p455w0rd
  *
  */
-public class ContainerRepairHacked extends ContainerRepair {
+public class ContainerRepairHacked extends Container {
 
-	private final IInventory output;
-	private final IInventory inputs;
-	private String repairedName;
-	private final EntityPlayer playerx;
-
-	public ContainerRepairHacked(World world, BlockPos blockPos, EntityPlayer player) {
-		super(player.inventory, world, blockPos, player);
-		output = ObfuscationReflectionHelper.getPrivateValue(ContainerRepair.class, this, "outputSlot");
-		inputs = ObfuscationReflectionHelper.getPrivateValue(ContainerRepair.class, this, "inputSlots");
-		playerx = ObfuscationReflectionHelper.getPrivateValue(ContainerRepair.class, this, "player");
-		repairedName = ObfuscationReflectionHelper.getPrivateValue(ContainerRepair.class, this, "repairedItemName");
-	}
+	/** Here comes out item you merged and/or renamed. */
+	private final IInventory outputSlot;
+	/** The 2slots where you put your items in that you want to merge and/or rename. */
+	private final IInventory inputSlots;
+	private final World world;
+	private final BlockPos selfPosition;
+	/** The maximum cost of repairing/renaming in the anvil. */
+	public int maximumCost;
+	/** determined by damage of input item and stackSize of repair materials */
+	public int materialCost;
+	private String repairedItemName;
+	/** The player that has this container open. */
+	private final EntityPlayer player;
 
 	@SideOnly(Side.CLIENT)
 	public ContainerRepairHacked(World worldIn, EntityPlayer player) {
 		this(worldIn, BlockPos.ORIGIN, player);
 	}
 
+	public ContainerRepairHacked(final World worldIn, final BlockPos blockPosIn, EntityPlayer player) {
+		outputSlot = new InventoryCraftResult();
+		inputSlots = new InventoryBasic("Repair", true, 2) {
+			/**
+			 * For tile entities, ensures the chunk containing the tile entity is saved to disk later - the game won't
+			 * think it hasn't changed and skip it.
+			 */
+			@Override
+			public void markDirty() {
+				super.markDirty();
+				ContainerRepairHacked.this.onCraftMatrixChanged(this);
+			}
+		};
+		selfPosition = blockPosIn;
+		world = worldIn;
+		this.player = player;
+		addSlotToContainer(new Slot(inputSlots, 0, 27, 47));
+		addSlotToContainer(new Slot(inputSlots, 1, 76, 47));
+		addSlotToContainer(new Slot(outputSlot, 2, 134, 47) {
+			/**
+			 * Check if the stack is allowed to be placed in this slot, used for armor slots as well as furnace fuel.
+			 */
+			@Override
+			public boolean isItemValid(ItemStack stack) {
+				return false;
+			}
+
+			/**
+			 * Return whether this slot's stack can be taken from this slot.
+			 */
+			@Override
+			public boolean canTakeStack(EntityPlayer playerIn) {
+				return (playerIn.capabilities.isCreativeMode || playerIn.experienceLevel >= maximumCost) && maximumCost > 0 && getHasStack();
+			}
+
+			@Override
+			public ItemStack onTake(EntityPlayer thePlayer, ItemStack stack) {
+				if (!thePlayer.capabilities.isCreativeMode) {
+					thePlayer.addExperienceLevel(-maximumCost);
+				}
+
+				float breakChance = net.minecraftforge.common.ForgeHooks.onAnvilRepair(thePlayer, stack, inputSlots.getStackInSlot(0), inputSlots.getStackInSlot(1));
+
+				inputSlots.setInventorySlotContents(0, ItemStack.EMPTY);
+
+				if (materialCost > 0) {
+					ItemStack itemstack = inputSlots.getStackInSlot(1);
+
+					if (!itemstack.isEmpty() && itemstack.getCount() > materialCost) {
+						itemstack.shrink(materialCost);
+						inputSlots.setInventorySlotContents(1, itemstack);
+					}
+					else {
+						inputSlots.setInventorySlotContents(1, ItemStack.EMPTY);
+					}
+				}
+				else {
+					inputSlots.setInventorySlotContents(1, ItemStack.EMPTY);
+				}
+
+				maximumCost = 0;
+				IBlockState iblockstate = worldIn.getBlockState(blockPosIn);
+
+				if (!thePlayer.capabilities.isCreativeMode && !worldIn.isRemote && iblockstate.getBlock() == Blocks.ANVIL && thePlayer.getRNG().nextFloat() < breakChance) {
+					int l = iblockstate.getValue(BlockAnvil.DAMAGE).intValue();
+					++l;
+
+					if (l > 2) {
+						worldIn.setBlockToAir(blockPosIn);
+						worldIn.playEvent(1029, blockPosIn, 0);
+					}
+					else {
+						worldIn.setBlockState(blockPosIn, iblockstate.withProperty(BlockAnvil.DAMAGE, Integer.valueOf(l)), 2);
+						worldIn.playEvent(1030, blockPosIn, 0);
+					}
+				}
+				else if (!worldIn.isRemote) {
+					worldIn.playEvent(1030, blockPosIn, 0);
+				}
+
+				return stack;
+			}
+		});
+
+		for (int i = 0; i < 3; ++i) {
+			for (int j = 0; j < 9; ++j) {
+				addSlotToContainer(new Slot(player.inventory, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
+			}
+		}
+
+		for (int k = 0; k < 9; ++k) {
+			addSlotToContainer(new Slot(player.inventory, k, 8 + k * 18, 142));
+		}
+	}
+
+	/**
+	 * Callback for when the crafting matrix is changed.
+	 */
 	@Override
+	public void onCraftMatrixChanged(IInventory inventoryIn) {
+		super.onCraftMatrixChanged(inventoryIn);
+
+		if (inventoryIn == inputSlots) {
+			updateRepairOutput();
+		}
+	}
+
+	/**
+	 * called when the Anvil Input Slot changes, calculates the new result and puts it in the output slot
+	 */
 	public void updateRepairOutput() {
-		ItemStack itemstack = inputs.getStackInSlot(0);
+		ItemStack itemstack = inputSlots.getStackInSlot(0);
 		maximumCost = 1;
 		int i = 0;
 		int j = 0;
 		int k = 0;
 
 		if (itemstack.isEmpty()) {
-			output.setInventorySlotContents(0, ItemStack.EMPTY);
+			outputSlot.setInventorySlotContents(0, ItemStack.EMPTY);
 			maximumCost = 0;
 		}
 		else {
 			ItemStack itemstack1 = itemstack.copy();
-			ItemStack itemstack2 = inputs.getStackInSlot(1);
+			ItemStack itemstack2 = inputSlots.getStackInSlot(1);
 			Map<Enchantment, Integer> map = EnchantmentHelper.getEnchantments(itemstack1);
 			j = j + itemstack.getRepairCost() + (itemstack2.isEmpty() ? 0 : itemstack2.getRepairCost());
 			materialCost = 0;
 			boolean flag = false;
 
 			if (!itemstack2.isEmpty()) {
-				if (!net.minecraftforge.common.ForgeHooks.onAnvilChange(this, itemstack, itemstack2, output, repairedName, j)) {
-					return;
-				}
+				//if (!net.minecraftforge.common.ForgeHooks.onAnvilChange(this, itemstack, itemstack2, outputSlot, repairedItemName, j)) return;
 				flag = itemstack2.getItem() == Items.ENCHANTED_BOOK && !ItemEnchantedBook.getEnchantments(itemstack2).hasNoTags();
 
 				if (itemstack1.isItemStackDamageable() && itemstack1.getItem().getIsRepairable(itemstack, itemstack2)) {
 					int l2 = Math.min(itemstack1.getItemDamage(), itemstack1.getMaxDamage() / 4);
 
 					if (l2 <= 0) {
-						output.setInventorySlotContents(0, ItemStack.EMPTY);
+						outputSlot.setInventorySlotContents(0, ItemStack.EMPTY);
 						maximumCost = 0;
 						return;
 					}
@@ -91,7 +200,7 @@ public class ContainerRepairHacked extends ContainerRepair {
 				}
 				else {
 					if (!flag && (itemstack1.getItem() != itemstack2.getItem() || !itemstack1.isItemStackDamageable())) {
-						output.setInventorySlotContents(0, ItemStack.EMPTY);
+						outputSlot.setInventorySlotContents(0, ItemStack.EMPTY);
 						maximumCost = 0;
 						return;
 					}
@@ -123,9 +232,9 @@ public class ContainerRepairHacked extends ContainerRepair {
 							int i2 = map.containsKey(enchantment1) ? map.get(enchantment1).intValue() : 0;
 							int j2 = map1.get(enchantment1).intValue();
 							j2 = i2 == j2 ? j2 + 1 : Math.max(j2, i2);
-							boolean flag1 = true;//enchantment1.canApply(itemstack);
+							boolean flag1 = enchantment1.canApply(itemstack);
 
-							if (playerx.capabilities.isCreativeMode || itemstack.getItem() == Items.ENCHANTED_BOOK) {
+							if (player.capabilities.isCreativeMode || itemstack.getItem() == Items.ENCHANTED_BOOK) {
 								flag1 = true;
 							}
 
@@ -177,24 +286,24 @@ public class ContainerRepairHacked extends ContainerRepair {
 					}
 
 					if (flag3 && !flag2) {
-						output.setInventorySlotContents(0, ItemStack.EMPTY);
+						outputSlot.setInventorySlotContents(0, ItemStack.EMPTY);
 						maximumCost = 0;
 						return;
 					}
 				}
 			}
 
-			if (StringUtils.isBlank(repairedName)) {
+			if (StringUtils.isBlank(repairedItemName)) {
 				if (itemstack.hasDisplayName()) {
 					k = 1;
 					i += k;
 					itemstack1.clearCustomName();
 				}
 			}
-			else if (!repairedName.equals(itemstack.getDisplayName())) {
+			else if (!repairedItemName.equals(itemstack.getDisplayName())) {
 				k = 1;
 				i += k;
-				itemstack1.setStackDisplayName(repairedName);
+				itemstack1.setStackDisplayName(repairedItemName);
 			}
 			if (flag && !itemstack1.getItem().isBookEnchantable(itemstack1, itemstack2)) {
 				itemstack1 = ItemStack.EMPTY;
@@ -210,7 +319,7 @@ public class ContainerRepairHacked extends ContainerRepair {
 				maximumCost = 39;
 			}
 
-			if (maximumCost >= Options.levelLimit && !playerx.capabilities.isCreativeMode) {
+			if (maximumCost >= Options.levelLimit && !player.capabilities.isCreativeMode) {
 				itemstack1 = ItemStack.EMPTY;
 			}
 
@@ -229,9 +338,113 @@ public class ContainerRepairHacked extends ContainerRepair {
 				EnchantmentHelper.setEnchantments(map, itemstack1);
 			}
 
-			output.setInventorySlotContents(0, itemstack1);
+			outputSlot.setInventorySlotContents(0, itemstack1);
 			detectAndSendChanges();
 		}
 	}
 
+	@Override
+	public void addListener(IContainerListener listener) {
+		super.addListener(listener);
+		listener.sendWindowProperty(this, 0, maximumCost);
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void updateProgressBar(int id, int data) {
+		if (id == 0) {
+			maximumCost = data;
+		}
+	}
+
+	/**
+	 * Called when the container is closed.
+	 */
+	@Override
+	public void onContainerClosed(EntityPlayer playerIn) {
+		super.onContainerClosed(playerIn);
+
+		if (!world.isRemote) {
+			clearContainer(playerIn, world, inputSlots);
+		}
+	}
+
+	/**
+	 * Determines whether supplied player can use this container
+	 */
+	@Override
+	public boolean canInteractWith(EntityPlayer playerIn) {
+		if (world.getBlockState(selfPosition).getBlock() != Blocks.ANVIL) {
+			return false;
+		}
+		else {
+			return playerIn.getDistanceSq(selfPosition.getX() + 0.5D, selfPosition.getY() + 0.5D, selfPosition.getZ() + 0.5D) <= 64.0D;
+		}
+	}
+
+	/**
+	 * Handle when the stack in slot {@code index} is shift-clicked. Normally this moves the stack between the player
+	 * inventory and the other inventory(s).
+	 */
+	@Override
+	public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
+		ItemStack itemstack = ItemStack.EMPTY;
+		Slot slot = inventorySlots.get(index);
+
+		if (slot != null && slot.getHasStack()) {
+			ItemStack itemstack1 = slot.getStack();
+			itemstack = itemstack1.copy();
+
+			if (index == 2) {
+				if (!mergeItemStack(itemstack1, 3, 39, true)) {
+					return ItemStack.EMPTY;
+				}
+
+				slot.onSlotChange(itemstack1, itemstack);
+			}
+			else if (index != 0 && index != 1) {
+				if (index >= 3 && index < 39 && !mergeItemStack(itemstack1, 0, 2, false)) {
+					return ItemStack.EMPTY;
+				}
+			}
+			else if (!mergeItemStack(itemstack1, 3, 39, false)) {
+				return ItemStack.EMPTY;
+			}
+
+			if (itemstack1.isEmpty()) {
+				slot.putStack(ItemStack.EMPTY);
+			}
+			else {
+				slot.onSlotChanged();
+			}
+
+			if (itemstack1.getCount() == itemstack.getCount()) {
+				return ItemStack.EMPTY;
+			}
+
+			slot.onTake(playerIn, itemstack1);
+		}
+
+		return itemstack;
+	}
+
+	/**
+	 * used by the Anvil GUI to update the Item Name being typed by the player
+	 */
+	public void updateItemName(String newName) {
+		repairedItemName = newName;
+
+		if (getSlot(2).getHasStack()) {
+			ItemStack itemstack = getSlot(2).getStack();
+
+			if (StringUtils.isBlank(newName)) {
+				itemstack.clearCustomName();
+			}
+			else {
+				itemstack.setStackDisplayName(repairedItemName);
+			}
+		}
+
+		updateRepairOutput();
+	}
 }

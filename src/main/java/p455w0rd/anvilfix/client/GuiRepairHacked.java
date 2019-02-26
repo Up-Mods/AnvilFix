@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import org.lwjgl.input.Keyboard;
 
-import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -13,14 +12,14 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.*;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.network.play.client.CPacketCustomPayload;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import p455w0rd.anvilfix.container.ContainerRepairHacked;
 import p455w0rd.anvilfix.init.ModConfig.Options;
+import p455w0rd.anvilfix.init.ModNetworking;
+import p455w0rd.anvilfix.packets.PacketRenameItem;
 
 /**
  * @author p455w0rd
@@ -29,7 +28,7 @@ import p455w0rd.anvilfix.init.ModConfig.Options;
 public class GuiRepairHacked extends GuiContainer implements IContainerListener {
 
 	private static final ResourceLocation ANVIL_RESOURCE = new ResourceLocation("textures/gui/container/anvil.png");
-	private final ContainerRepair anvil;
+	private final ContainerRepairHacked anvil;
 	private GuiTextField nameField;
 	private final InventoryPlayer playerInventory;
 	public static BlockPos position;
@@ -37,7 +36,7 @@ public class GuiRepairHacked extends GuiContainer implements IContainerListener 
 	public GuiRepairHacked(InventoryPlayer inventoryIn, World worldIn) {
 		super(new ContainerRepairHacked(worldIn, Minecraft.getMinecraft().player));
 		playerInventory = inventoryIn;
-		anvil = (ContainerRepair) inventorySlots;
+		anvil = (ContainerRepairHacked) inventorySlots;
 	}
 
 	/**
@@ -138,7 +137,8 @@ public class GuiRepairHacked extends GuiContainer implements IContainerListener 
 		}
 
 		anvil.updateItemName(s);
-		mc.player.connection.sendPacket(new CPacketCustomPayload("MC|ItemName", (new PacketBuffer(Unpooled.buffer())).writeString(s)));
+		//mc.player.connection.sendPacket(new CPacketCustomPayload("MC|ItemName", (new PacketBuffer(Unpooled.buffer())).writeString(s)));
+		ModNetworking.getInstance().sendToServer(new PacketRenameItem(s));
 	}
 
 	/**

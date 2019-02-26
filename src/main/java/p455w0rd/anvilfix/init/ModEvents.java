@@ -1,6 +1,5 @@
 package p455w0rd.anvilfix.init;
 
-import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumActionResult;
 import net.minecraftforge.event.AnvilUpdateEvent;
@@ -8,7 +7,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBloc
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import p455w0rd.anvilfix.client.GuiRepairHacked;
+import p455w0rd.anvilfix.AnvilFix;
 import p455w0rd.anvilfix.init.ModConfig.Options;
 
 /**
@@ -34,16 +33,13 @@ public class ModEvents {
 
 	@SubscribeEvent
 	public static void onRightClickBlock(RightClickBlock event) {
-		if (isAnvil(event.getWorld().getBlockState(event.getPos()).getBlock())) {
-			event.setCancellationResult(EnumActionResult.PASS);
+		if (event.getWorld().getBlockState(event.getPos()).getBlock() == Blocks.ANVIL) {
 			if (!event.getWorld().isRemote) {
-				GuiRepairHacked.position = event.getPos();
+				event.getEntityPlayer().openGui(AnvilFix.INSTANCE, 0, event.getWorld(), event.getPos().getX(), event.getPos().getY(), event.getPos().getZ());
+				event.setCancellationResult(EnumActionResult.FAIL);
+				event.setCanceled(true);
 			}
 		}
-	}
-
-	private static boolean isAnvil(Block block) {
-		return block == Blocks.ANVIL;
 	}
 
 }
