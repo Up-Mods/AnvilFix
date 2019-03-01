@@ -8,7 +8,7 @@
         "nerdhub.anvilfix.AnvilFix"
     ],
     "mixins": {
-        "client": "anvilfix.client.json",
-        "common": "anvilfix.common.json"
+        "client": "mixins.anvilfix.client.json",
+        "common": "mixins.anvilfix.common.json"
     }
 }

@@ -41,7 +41,6 @@ import java.io.IOException;
 
 public class AnvilFix implements ModInitializer {
 
-    //TODO config!
     public static final String MODID = "anvil_fix";
     private static final Logger LOG = LogManager.getLogger(MODID);
     private static final String FABRIC_ID = "fabric";

@@ -33,11 +33,17 @@ public class AnvilfixConfig {
 
     @SerializedName("ignore_incremental_repair_cost") private boolean noIncrementalCost = true;
 
+    @SerializedName("stop_anvil_breaking") private boolean stopAnvilBreaking = false;
+
     public int getLevelLimit() {
         return levelLimit != -1 ? levelLimit + 1 : Integer.MAX_VALUE;
     }
 
     public boolean removeIncrementalCost(ItemStack stack) {
         return noIncrementalCost;
+    }
+
+    public boolean shouldStopAnvilBreaking() {
+        return stopAnvilBreaking;
     }
 }

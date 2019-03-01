@@ -1,0 +1,11 @@
+{
+    "required": true,
+    "package": "nerdhub.anvilfix.mixin.client",
+    "compatibilityLevel": "JAVA_8",
+    "mixins": [
+        "MixinAnvilScreen"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}
