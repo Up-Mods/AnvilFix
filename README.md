@@ -6,10 +6,10 @@ also has an option for preventing anvils from taking damage when being used
 ---
 
 Download latest (1.14):
-[![Download](https://curse.nikky.moe/api/img/305480?logo&version=1.14-Snapshot)](https://curse.nikky.moe/api/url/305480&version=1.14-Snapshot)
+[![Download](https://curse.nikky.moe/api/img/305480?logo&version=1.14-Snapshot)](https://curse.nikky.moe/api/url/305480?version=1.14-Snapshot)
 
 Download latest (1.12):
-[![Download](https://curse.nikky.moe/api/img/305480?logo&version=1.12.2)](https://curse.nikky.moe/api/url/305480&version=1.12.2)
+[![Download](https://curse.nikky.moe/api/img/305480?logo&version=1.12.2)](https://curse.nikky.moe/api/url/305480?version=1.12.2)
 
 All Downloads:
 [![Files](https://curse.nikky.moe/api/img/305480/files?logo)](https://minecraft.curseforge.com/projects/305480/files)
