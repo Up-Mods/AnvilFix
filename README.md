@@ -1,6 +1,6 @@
-![Logo](https://raw.githubusercontent.com/NerdHubMC/AnvilFix/master/.github/Logo.png "AnvilFix Logo")
+<img src="https://raw.githubusercontent.com/NerdHubMC/AnvilFix/master/src/main/resources/assets/anvil_fix/icon.png" width="200" height="200" />
 
-# AnvilFix [![CurseForge](http://cf.way2muchnoise.eu/full_305480_downloads.svg)](https://minecraft.curseforge.com/projects/305480)
+# AnvilFix [![CurseForge](http://cf.way2muchnoise.eu/full_305480_downloads.svg)](https://minecraft.curseforge.com/projects/305480 "CurseForge")
 removes the level limit for Anvils, as well as the incremental repair cost (configurable)<br/>
 also has an option for preventing anvils from taking damage when being used
 
