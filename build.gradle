@@ -41,6 +41,10 @@ repositories {
         url = "https://maven.abusedmaster.xyz"
     }
     maven {
+        name = "FabricMC"
+        url = "https://maven.fabricmc.net"
+    }
+    maven {
         name = "CurseForge"
         url = "https://minecraft.curseforge.com/api/maven"
     }
@@ -55,8 +59,9 @@ dependencies {
     mappings "net.fabricmc:yarn:${yarn_mappings}"
     modCompile "net.fabricmc:fabric-loader:${loader_version}"
 
-    //optional dependency!
+    //optional dependencies!
     modCompile "net.fabricmc:fabric:${fabric_version}"
+    modCompile "io.github.prospector.modmenu:ModMenu:${modmenu_version}" // FabricMC
 
     compileOnly "com.google.code.findbugs:jsr305:${findbugs_version}"
 }
