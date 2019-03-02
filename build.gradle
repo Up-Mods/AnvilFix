@@ -26,7 +26,12 @@ processResources {
         include "fabric.mod.json"
 
         // add mod metadata
-        expand "version": project.version
+        expand "version": project.version, "changelog_url": project.changelog_url,
+                "curseforge_id": project.curseforge_id, "license": project.license_header
+
+        filter { String line ->
+            line.replace("\"fabric\": \"*\"", "\"fabric\": \"[${fabric_version},)\"")
+        }
     }
 
     // copy everything else, that"s not the mcmod.info

@@ -2,16 +2,17 @@
     "id": "anvil_fix",
     "name": "AnvilFix",
     "description": "tweaks for the Anvil",
-    "license": "MIT",
+    "license": "${license}",
     "version": "${version}",
     "side": "universal",
     "recommended": {
         "fabric": "*"
     },
     "links": {
-        "homepage": "https://minecraft.curseforge.com/projects/305480",
+        "homepage": "https://minecraft.curseforge.com/projects/${curseforge_id}",
         "source": "https://github.com/NerdHubMC/AnvilFix",
-        "issues": "https://github.com/NerdHubMC/AnvilFix/issues"
+        "issues": "https://github.com/NerdHubMC/AnvilFix/issues",
+        "changelog": "${changelog_url}"
     },
     "initializers": [
         "nerdhub.anvilfix.AnvilFix"
