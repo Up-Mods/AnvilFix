@@ -24,11 +24,17 @@
 package nerdhub.anvilfix.config;
 
 import nerdhub.anvilfix.AnvilFix;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.resource.ResourceManager;
+import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 
 public class AnvilFixConfigReloadListener implements SimpleSynchronousResourceReloadListener {
+
+    public static void init() {
+        ResourceManagerHelper.get(ResourceType.DATA).registerReloadListener(new AnvilFixConfigReloadListener());
+    }
 
     @Override
     public Identifier getFabricId() {

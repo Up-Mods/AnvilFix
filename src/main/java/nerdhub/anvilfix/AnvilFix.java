@@ -28,9 +28,7 @@ import com.google.gson.GsonBuilder;
 import nerdhub.anvilfix.config.AnvilFixConfigReloadListener;
 import nerdhub.anvilfix.config.AnvilfixConfig;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.resource.ResourceType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -54,7 +52,8 @@ public class AnvilFix implements ModInitializer {
     public void onInitialize() {
         reloadConfig();
         if(FabricLoader.getInstance().isModLoaded(FABRIC_ID)) {
-            ResourceManagerHelper.get(ResourceType.DATA).registerReloadListener(new AnvilFixConfigReloadListener());
+            LOG.info("found fabric API, registering reload listener");
+            AnvilFixConfigReloadListener.init();
         }
     }
 

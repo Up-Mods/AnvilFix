@@ -98,11 +98,11 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            artifact (jar) {
+            artifact(jar) {
                 builtBy remapJar
             }
             artifact javadocJar
-            artifact (sourcesJar) {
+            artifact(sourcesJar) {
                 builtBy remapSourcesJar
             }
             pom {
@@ -156,7 +156,7 @@ curseforge {
     if (project.hasProperty("curseforge_id")) {
         project {
             id = findProperty("curseforge_id")
-            mainArtifact(jar) {
+            mainArtifact(remapJar) {
                 displayName = "${project.archivesBaseName} MC${project.minecraft_version} v${project.mod_version}"
             }
             releaseType = project.release_type
@@ -204,10 +204,11 @@ license {
 
 afterEvaluate {
     //make curseforge task depend on build
-    String curseID = findProperty(curseforge_id);
+    String curseID = findProperty("curseforge_id")
     if (curseID != null) {
         tasks.each {
-            if (it.name == "curseforge" + curseID) {
+            if (it.name == "curseforge" || it.name == "curseforge" + curseID) {
+                println("adding remap dependencies for task " + it.name)
                 it.dependsOn remapJar, remapSourcesJar
             }
         }
@@ -217,7 +218,7 @@ afterEvaluate {
 String getChangelogText() {
     def changelogFile = new File(project.projectDir, "changelog.md")
     String str = ''
-    if(!changelogFile.exists()) {
+    if (!changelogFile.exists()) {
         System.out.println("No changelog file found, creating one at \"" + changelogFile.getAbsolutePath() + "\"")
         changelogFile.createNewFile()
         String newText = '------------------------------------------------------\n' +
