@@ -156,7 +156,7 @@ curseforge {
     if (project.hasProperty("curseforge_id")) {
         project {
             id = findProperty("curseforge_id")
-            mainArtifact(remapJar) {
+            mainArtifact(jar) {
                 displayName = "${project.archivesBaseName} MC${project.minecraft_version} v${project.mod_version}"
             }
             releaseType = project.release_type
