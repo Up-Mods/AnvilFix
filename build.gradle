@@ -30,10 +30,24 @@ repositories {
 		name = "progwml6"
 		url = "http://dvs1.progwml6.com/files/maven"
 	}
+	maven {
+		name = "tterrag"
+		url = "http://maven.tterrag.com"
+	}
+	maven {
+		name = "tterrag2"
+		url = "http://maven2.tterrag.com"
+	}
 }
 
 dependencies {
 	deobfCompile "mezz.jei:jei_1.12.2:4.14.3.242"
+	deobfCompile "info.loenwind.autoconfig:AutoConfig:1.12.2-1.0.1"
+	deobfCompile "info.loenwind.autosave:AutoSave:1.12.2-1.0.8"
+	deobfCompile "com.enderio.core:EnderCore:1.12.2-0.5.44"
+	deobfCompile ("com.enderio:EnderIO:1.12.2-5.0.39") {
+		transitive = false
+	}
 }
 
 processResources {

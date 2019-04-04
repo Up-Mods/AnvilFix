@@ -16,12 +16,13 @@ public class ModConfig {
 
 	public static void init() {
 		if (CONFIG == null) {
-			File configFile = new File(ModGlobals.CONFIG_FILE);
+			final File configFile = new File(ModGlobals.CONFIG_FILE);
 			CONFIG = new Configuration(configFile);
 			CONFIG.load();
 		}
 
 		Options.ignoreRepairCost = CONFIG.getBoolean("ignore_incremental_repair_cost", CATEGORY_GENERAL, true, "Ignore the cumulative repair cost");
+		Options.noAnvilDamage = CONFIG.getBoolean("noAnvilDamage", CATEGORY_GENERAL, false, "If true, anvils will not take damage due to use");
 		Options.levelLimit = CONFIG.getInt("anvil_level_limit", CATEGORY_GENERAL, -1, -1, Integer.MAX_VALUE, "Sets the level limit of combining Items in an Anvil (vanilla default is 40)");
 		if (Options.levelLimit <= -1) {
 			Options.levelLimit = Integer.MAX_VALUE;
@@ -33,7 +34,7 @@ public class ModConfig {
 
 	public static class Options {
 
-		public static boolean ignoreRepairCost = true;
+		public static boolean ignoreRepairCost = true, noAnvilDamage = false;
 		public static int levelLimit = -1;
 	}
 
