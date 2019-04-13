@@ -46,7 +46,7 @@ public class ContainerRepairHacked extends ContainerRepair {
 	}
 
 	public ContainerRepairHacked(final World worldIn, final BlockPos blockPosIn, final EntityPlayer player) {
-		super(player.inventory, worldIn, player);
+		super(player.inventory, worldIn, blockPosIn, player);
 		outputSlot = new InventoryCraftResult();
 		inputSlots = new InventoryBasic("Repair", true, 2) {
 			/**
