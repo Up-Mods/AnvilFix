@@ -11,73 +11,9 @@ buildscript {
 	}
 }
 
-apply plugin: 'net.minecraftforge.gradle.forge'
-apply plugin: 'maven'
-
-version = "1.12.2-" + getVersion()
-group = "p455w0rd"
-archivesBaseName = "AnvilFix"
-sourceCompatibility = targetCompatibility = "1.8"
-
-minecraft {
-	version = "1.12.2-14.23.5.2768"
-	runDir = "run"
-	mappings = "snapshot_20171003"
+plugins {
+	id "com.wynprice.cursemaven" version "1.1.0"
 }
 
-repositories {
-	maven {
-		name = "progwml6"
-		url = "http://dvs1.progwml6.com/files/maven"
-	}
-	maven {
-		name = "tterrag"
-		url = "http://maven.tterrag.com"
-	}
-	maven {
-		name = "tterrag2"
-		url = "http://maven2.tterrag.com"
-	}
-}
-
-dependencies {
-	deobfCompile "mezz.jei:jei_1.12.2:4.14.3.242"
-	deobfCompile "info.loenwind.autoconfig:AutoConfig:1.12.2-1.0.1"
-	deobfCompile "info.loenwind.autosave:AutoSave:1.12.2-1.0.8"
-	deobfCompile "com.enderio.core:EnderCore:1.12.2-0.5.44"
-	deobfCompile ("com.enderio:EnderIO:1.12.2-5.0.39") {
-		transitive = false
-	}
-}
-
-processResources {
-	inputs.property "version", project.version
-	inputs.property "mcversion", project.minecraft.version
-	from (sourceSets.main.resources.srcDirs) {
-		include "mcmod.info"
-		expand "version": project.version, "mcversion": project.minecraft.version
-	}
-	from (sourceSets.main.resources.srcDirs) {
-		exclude "mcmod.info"
-	}
-}
-
-String getVersion() {
-	String major = "0";
-	String revision = "0";
-	String patch = "0";
-	String prefix = "public static final String VERSION = \"";
-	File file = file("src/main/java/p455w0rd/anvilfix/init/ModGlobals.java")
-	file.eachLine { String s ->
-		s = s.trim();
-		if (s.startsWith(prefix)) {
-			s = s.substring(prefix.length(), s.length() - 2);
-			String[] pts = s.split("\\.");
-
-			major = pts[0];
-			revision = pts[1];
-			patch = pts[2];
-		}
-	}
-	return "$major.$revision.$patch";
-}
+apply from : 'https://github.com/p455w0rd/buildscripts/raw/master/base.gradle'
+apply from : 'https://github.com/p455w0rd/buildscripts/raw/master/enderio.gradle'

@@ -18,21 +18,21 @@ import p455w0rd.anvilfix.init.ModConfig.Options;
 public class ModEvents {
 
 	@SubscribeEvent
-	public static void onConfigChanged(ConfigChangedEvent event) {
+	public static void onConfigChanged(final ConfigChangedEvent event) {
 		if (ModConfig.CONFIG.hasChanged()) {
 			ModConfig.CONFIG.save();
 		}
 	}
 
 	@SubscribeEvent
-	public static void onAnvilUpdate(AnvilUpdateEvent event) {
+	public static void onAnvilUpdate(final AnvilUpdateEvent event) {
 		if (Options.ignoreRepairCost && event.getCost() > 0) {
-			event.setCost(0);
+			//event.setCost(0);
 		}
 	}
 
 	@SubscribeEvent
-	public static void onRightClickBlock(RightClickBlock event) {
+	public static void onRightClickBlock(final RightClickBlock event) {
 		if (event.getWorld().getBlockState(event.getPos()).getBlock() == Blocks.ANVIL) {
 			if (!event.getWorld().isRemote) {
 				event.getEntityPlayer().openGui(AnvilFix.INSTANCE, 0, event.getWorld(), event.getPos().getX(), event.getPos().getY(), event.getPos().getZ());

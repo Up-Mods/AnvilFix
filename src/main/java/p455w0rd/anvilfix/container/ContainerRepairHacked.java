@@ -184,9 +184,13 @@ public class ContainerRepairHacked extends ContainerRepair {
 			boolean flag = false;
 
 			if (!itemstack2.isEmpty()) {
-				if (!net.minecraftforge.common.ForgeHooks.onAnvilChange(this, itemstack, itemstack2, outputSlot, repairedItemName, j)) {
-					return;
+				if (Options.ignoreRepairCost && maximumCost > 0) {
+					materialCost = 0;
+					maximumCost = 0;
 				}
+				//if (!net.minecraftforge.common.ForgeHooks.onAnvilChange(this, itemstack, itemstack2, outputSlot, repairedItemName, j)) {
+				//	return;
+				//}
 				flag = itemstack2.getItem() == Items.ENCHANTED_BOOK && !ItemEnchantedBook.getEnchantments(itemstack2).hasNoTags();
 
 				if (itemstack1.isItemStackDamageable() && itemstack1.getItem().getIsRepairable(itemstack, itemstack2)) {
@@ -320,14 +324,14 @@ public class ContainerRepairHacked extends ContainerRepair {
 				itemstack1 = ItemStack.EMPTY;
 			}
 
-			maximumCost = j + i;
+			maximumCost = Options.ignoreRepairCost ? 0 : j + i;
 
 			if (i <= 0) {
 				itemstack1 = ItemStack.EMPTY;
 			}
 
 			if (k == i && k > 0 && maximumCost >= 40) {
-				maximumCost = 39;
+				maximumCost = Options.ignoreRepairCost ? 0 : 39;
 			}
 
 			if (maximumCost >= Options.levelLimit && !player.capabilities.isCreativeMode) {
@@ -364,7 +368,7 @@ public class ContainerRepairHacked extends ContainerRepair {
 	@SideOnly(Side.CLIENT)
 	public void updateProgressBar(final int id, final int data) {
 		if (id == 0) {
-			maximumCost = data;
+			maximumCost = Options.ignoreRepairCost ? 0 : data;
 		}
 	}
 
