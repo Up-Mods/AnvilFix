@@ -25,15 +25,24 @@ package nerdhub.anvilfix.mixin.common;
 
 import nerdhub.anvilfix.AnvilFix;
 import net.minecraft.container.AnvilContainer;
+import net.minecraft.enchantment.Enchantment;
+
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(AnvilContainer.class)
 public class MixinAnvilContainer {
 
-    @ModifyConstant(method = "method_7628", constant = @Constant(intValue = 40, ordinal = 2))
+    @ModifyConstant(method = "updateResult", constant = @Constant(intValue = 40, ordinal = 2))
     private int modifyInt(int input) {
         return AnvilFix.getConfig().getLevelLimit();
+    }
+
+    @Redirect(method = "updateResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/enchantment/Enchantment;getMaximumLevel()I"))
+    private int getMaximumLevelProxy(Enchantment enchantment) {
+        return AnvilFix.getConfig().getEnchantmentLimit(enchantment);
     }
 }
