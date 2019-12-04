@@ -33,7 +33,7 @@ import net.minecraft.util.Identifier;
 public class AnvilFixConfigReloadListener implements SimpleSynchronousResourceReloadListener {
 
     public static void init() {
-        ResourceManagerHelper.get(ResourceType.DATA).registerReloadListener(new AnvilFixConfigReloadListener());
+        ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new AnvilFixConfigReloadListener());
     }
 
     @Override

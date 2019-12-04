@@ -24,6 +24,8 @@
 package nerdhub.anvilfix.config;
 
 import com.google.gson.annotations.SerializedName;
+
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.ItemStack;
 
 @SuppressWarnings("ALL")
@@ -31,12 +33,18 @@ public class AnvilfixConfig {
 
     @SerializedName("anvil_level_limit") private int levelLimit = -1;
 
+    @SerializedName("global_enchantment_level_limit") private short globalEnchantmentLimit = -1;
+
     @SerializedName("ignore_incremental_repair_cost") private boolean noIncrementalCost = true;
 
     @SerializedName("stop_anvil_breaking") private boolean stopAnvilBreaking = false;
 
     public int getLevelLimit() {
         return levelLimit != -1 ? levelLimit + 1 : Integer.MAX_VALUE;
+    }
+
+    public int getEnchantmentLimit(Enchantment enchantment) {
+        return globalEnchantmentLimit > 0 ? globalEnchantmentLimit : enchantment.getMaximumLevel();
     }
 
     public boolean removeIncrementalCost(ItemStack stack) {

@@ -24,7 +24,8 @@
 package nerdhub.anvilfix.mixin.client;
 
 import nerdhub.anvilfix.AnvilFix;
-import net.minecraft.client.gui.container.AnvilScreen;
+import net.minecraft.client.gui.screen.ingame.AnvilScreen;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
