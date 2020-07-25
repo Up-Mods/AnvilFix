@@ -1,19 +1,11 @@
-<img src="https://raw.githubusercontent.com/NerdHubMC/AnvilFix/master/src/main/resources/assets/anvil_fix/icon.png" width="200" height="200" />
+# AnvilFix
 
-# AnvilFix [![CurseForge](http://cf.way2muchnoise.eu/full_305480_downloads.svg)](https://minecraft.curseforge.com/projects/305480 "CurseForge")
-removes the level limit for Anvils, as well as the incremental repair cost (configurable)<br/>
+[![Build Status](https://img.shields.io/github/workflow/status/OnyxStudios/AnvilFix/Build%20Status?label=Build%20Status&logo=GitHub&style=flat-square)](https://github.com/OnyxStudios/AnvilFix/actions?query=workflow%3A%22Build+Status%22 "GitHub Actions")[![Latest Release](https://img.shields.io/github/v/release/OnyxStudios/AnvilFix?include_prereleases&label=Latest&logo=GitHub&style=flat-square)](https://github.com/OnyxStudios/AnvilFix/releases/latest "GitHub Releases")[![JitPack](https://jitpack.io/v/OnyxStudios/AnvilFix.svg?style=flat-square)](https://jitpack.io/#OnyxStudios/AnvilFix "Jitpack")[![Maven Repository](https://img.shields.io/maven-metadata/v/https/maven.onyxstudios.dev/io/github/OnyxStudios/AnvilFix/maven-metadata.xml.svg?label=OnyxStudios%20Maven&style=flat-square)](https://maven.onyxstudios.dev/io/github/OnyxStudios/AnvilFix "Onyx Studios Maven")[![Files](https://curse.nikky.moe/api/img/305480/files?logo&label=CurseForge&style=flat-square)](https://www.curseforge.com/minecraft/mc-mods/anvil-fix/files/all "UpcraftLP/AnvilFix on CurseForge")
+
+removes the level limit for Anvils, as well as the incremental repair cost (configurable)  
 also has an option for preventing anvils from taking damage when being used
 
-[![Maven Repository](https://img.shields.io/maven-metadata/v/https/maven.abusedmaster.xyz/com/github/NerdHubMC/AnvilFix/maven-metadata.xml.svg)](https://maven.abusedmaster.xyz/com/github/NerdHubMC/AnvilFix "NerdHubMC Maven") [![JitPack](https://jitpack.io/v/NerdHubMC/AnvilFix.svg)](https://jitpack.io/#NerdHubMC/AnvilFix "Jitpack")
----
+### Curseforge:
 
-Download latest (1.14):
-[![Download](https://curse.nikky.moe/api/img/305480?logo&version=1.14-Snapshot)](https://curse.nikky.moe/api/url/305480?version=1.14-Snapshot)
+[UpcraftLP/AnvilFix](https://www.curseforge.com/minecraft/mc-mods/anvil-fix "UpcraftLP/AnvilFix on CurseForge")[![CurseForge](http://cf.way2muchnoise.eu/full_305480_downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/anvil-fix "UpcraftLP/AnvilFix on CurseForge")
 
-Download latest (1.12):
-[![Download](https://curse.nikky.moe/api/img/305480?logo&version=1.12.2)](https://curse.nikky.moe/api/url/305480?version=1.12.2)
-
-All Downloads:
-[![Files](https://curse.nikky.moe/api/img/305480/files?logo)](https://minecraft.curseforge.com/projects/305480/files)
-
----

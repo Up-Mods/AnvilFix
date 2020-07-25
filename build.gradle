@@ -72,7 +72,15 @@ publishing {
     }
 
     repositories {
-
+        if(ENV.MAVEN_URL && ENV.MAVEN_USER && ENV.MAVEN_PASS) {
+            maven {
+                url = ENV.MAVEN_URL
+                credentials {
+                    username = ENV.MAVEN_USER
+                    password = ENV.MAVEN_PASS
+                }
+            }
+        }
     }
 }
 
