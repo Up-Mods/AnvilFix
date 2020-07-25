@@ -21,12 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package nerdhub.anvilfix;
+package io.github.onyxstudios.anvilfix;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import nerdhub.anvilfix.config.AnvilFixConfigReloadListener;
-import nerdhub.anvilfix.config.AnvilfixConfig;
+import io.github.onyxstudios.anvilfix.config.AnvilFixConfigReloadListener;
+import io.github.onyxstudios.anvilfix.config.AnvilfixConfig;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import org.apache.logging.log4j.LogManager;

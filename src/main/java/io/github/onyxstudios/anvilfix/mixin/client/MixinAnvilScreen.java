@@ -21,28 +21,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package nerdhub.anvilfix.config;
+package io.github.onyxstudios.anvilfix.mixin.client;
 
-import nerdhub.anvilfix.AnvilFix;
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
-import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.resource.ResourceType;
-import net.minecraft.util.Identifier;
+import io.github.onyxstudios.anvilfix.AnvilFix;
+import net.minecraft.client.gui.screen.ingame.AnvilScreen;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.Constant;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
 
-public class AnvilFixConfigReloadListener implements SimpleSynchronousResourceReloadListener {
+@Mixin(AnvilScreen.class)
+public class MixinAnvilScreen {
 
-    public static void init() {
-        ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new AnvilFixConfigReloadListener());
-    }
-
-    @Override
-    public Identifier getFabricId() {
-        return new Identifier(AnvilFix.MODID, "config");
-    }
-
-    @Override
-    public void apply(ResourceManager manager) {
-        AnvilFix.reloadConfig();
+    @ModifyConstant(method = "drawForeground", constant = @Constant(intValue = 40, ordinal = 0))
+    private int modifyInt(int input) {
+        return AnvilFix.getConfig().getLevelLimit();
     }
 }

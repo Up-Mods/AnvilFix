@@ -1,0 +1,16 @@
+{
+    "required": true,
+    "package": "io.github.onyxstudios.anvilfix.mixin",
+    "compatibilityLevel": "JAVA_8",
+    "mixins": [
+        "common.MixinAnvilBlock",
+        "common.MixinAnvilContainer",
+        "common.MixinItemStack"
+    ],
+    "client": [
+        "client.MixinAnvilScreen"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}

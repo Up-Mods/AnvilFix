@@ -21,22 +21,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package nerdhub.anvilfix.mixin.common;
+package io.github.onyxstudios.anvilfix.config;
 
-import nerdhub.anvilfix.AnvilFix;
+import com.google.gson.annotations.SerializedName;
+
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.ItemStack;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(ItemStack.class)
-public abstract class MixinItemStack {
+@SuppressWarnings("ALL")
+public class AnvilfixConfig {
 
-    @Inject(method = "getRepairCost", at = @At("RETURN"), cancellable = true)
-    private void getRepairCost(CallbackInfoReturnable<Integer> cir) {
-        if(cir.getReturnValueI() > 0 && AnvilFix.getConfig().removeIncrementalCost((ItemStack) (Object) this)) {
-            cir.setReturnValue(0);
-        }
+    @SerializedName("anvil_level_limit") private int levelLimit = -1;
+
+    @SerializedName("global_enchantment_level_limit") private short globalEnchantmentLimit = -1;
+
+    @SerializedName("ignore_incremental_repair_cost") private boolean noIncrementalCost = true;
+
+    @SerializedName("stop_anvil_breaking") private boolean stopAnvilBreaking = false;
+
+    public int getLevelLimit() {
+        return levelLimit != -1 ? levelLimit + 1 : Integer.MAX_VALUE;
+    }
+
+    public int getEnchantmentLimit(Enchantment enchantment) {
+        return globalEnchantmentLimit > 0 ? globalEnchantmentLimit : enchantment.getMaxLevel();
+    }
+
+    public boolean removeIncrementalCost(ItemStack stack) {
+        return noIncrementalCost;
+    }
+
+    public boolean shouldStopAnvilBreaking() {
+        return stopAnvilBreaking;
     }
 }

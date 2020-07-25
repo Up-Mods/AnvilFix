@@ -21,28 +21,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package nerdhub.anvilfix.mixin.common;
+package io.github.onyxstudios.anvilfix.mixin.common;
 
-import nerdhub.anvilfix.AnvilFix;
-import net.minecraft.screen.AnvilScreenHandler;
-import net.minecraft.enchantment.Enchantment;
-
+import io.github.onyxstudios.anvilfix.AnvilFix;
+import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Constant;
-import org.spongepowered.asm.mixin.injection.ModifyConstant;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(AnvilScreenHandler.class)
-public class MixinAnvilContainer {
+@Mixin(ItemStack.class)
+public abstract class MixinItemStack {
 
-    @ModifyConstant(method = "updateResult", constant = @Constant(intValue = 40, ordinal = 2))
-    private int modifyInt(int input) {
-        return AnvilFix.getConfig().getLevelLimit();
-    }
-
-    @Redirect(method = "updateResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/enchantment/Enchantment;getMaxLevel()I"))
-    private int getMaximumLevelProxy(Enchantment enchantment) {
-        return AnvilFix.getConfig().getEnchantmentLimit(enchantment);
+    @Inject(method = "getRepairCost", at = @At("RETURN"), cancellable = true)
+    private void getRepairCost(CallbackInfoReturnable<Integer> cir) {
+        if(cir.getReturnValueI() > 0 && AnvilFix.getConfig().removeIncrementalCost((ItemStack) (Object) this)) {
+            cir.setReturnValue(0);
+        }
     }
 }

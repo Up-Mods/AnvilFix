@@ -21,9 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package nerdhub.anvilfix.mixin.common;
+package io.github.onyxstudios.anvilfix.mixin.common;
 
-import nerdhub.anvilfix.AnvilFix;
+import io.github.onyxstudios.anvilfix.AnvilFix;
 import net.minecraft.block.AnvilBlock;
 import net.minecraft.block.BlockState;
 import org.spongepowered.asm.mixin.Mixin;

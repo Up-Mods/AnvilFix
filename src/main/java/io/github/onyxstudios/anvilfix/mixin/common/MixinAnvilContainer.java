@@ -21,37 +21,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package nerdhub.anvilfix.config;
+package io.github.onyxstudios.anvilfix.mixin.common;
 
-import com.google.gson.annotations.SerializedName;
-
+import io.github.onyxstudios.anvilfix.AnvilFix;
 import net.minecraft.enchantment.Enchantment;
-import net.minecraft.item.ItemStack;
+import net.minecraft.screen.AnvilScreenHandler;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Constant;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
-@SuppressWarnings("ALL")
-public class AnvilfixConfig {
+@Mixin(AnvilScreenHandler.class)
+public class MixinAnvilContainer {
 
-    @SerializedName("anvil_level_limit") private int levelLimit = -1;
-
-    @SerializedName("global_enchantment_level_limit") private short globalEnchantmentLimit = -1;
-
-    @SerializedName("ignore_incremental_repair_cost") private boolean noIncrementalCost = true;
-
-    @SerializedName("stop_anvil_breaking") private boolean stopAnvilBreaking = false;
-
-    public int getLevelLimit() {
-        return levelLimit != -1 ? levelLimit + 1 : Integer.MAX_VALUE;
+    @ModifyConstant(method = "updateResult", constant = @Constant(intValue = 40, ordinal = 2))
+    private int modifyInt(int input) {
+        return AnvilFix.getConfig().getLevelLimit();
     }
 
-    public int getEnchantmentLimit(Enchantment enchantment) {
-        return globalEnchantmentLimit > 0 ? globalEnchantmentLimit : enchantment.getMaxLevel();
-    }
-
-    public boolean removeIncrementalCost(ItemStack stack) {
-        return noIncrementalCost;
-    }
-
-    public boolean shouldStopAnvilBreaking() {
-        return stopAnvilBreaking;
+    @Redirect(method = "updateResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/enchantment/Enchantment;getMaxLevel()I"))
+    private int getMaximumLevelProxy(Enchantment enchantment) {
+        return AnvilFix.getConfig().getEnchantmentLimit(enchantment);
     }
 }
