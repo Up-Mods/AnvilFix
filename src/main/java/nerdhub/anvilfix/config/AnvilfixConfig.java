@@ -44,7 +44,7 @@ public class AnvilfixConfig {
     }
 
     public int getEnchantmentLimit(Enchantment enchantment) {
-        return globalEnchantmentLimit > 0 ? globalEnchantmentLimit : enchantment.getMaximumLevel();
+        return globalEnchantmentLimit > 0 ? globalEnchantmentLimit : enchantment.getMaxLevel();
     }
 
     public boolean removeIncrementalCost(ItemStack stack) {
