@@ -23,65 +23,26 @@
  */
 package io.github.onyxstudios.anvilfix;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import io.github.onyxstudios.anvilfix.config.AnvilFixConfigReloadListener;
+import io.github.glasspane.mesh.api.util.config.ConfigHandler;
 import io.github.onyxstudios.anvilfix.config.AnvilfixConfig;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.tag.TagRegistry;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.item.Item;
 import net.minecraft.tag.Tag;
 import net.minecraft.util.Identifier;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 
 public class AnvilFix implements ModInitializer {
 
     public static final String MODID = "anvil_fix";
-    private static final Logger LOG = LogManager.getLogger(MODID);
-    private static final String FABRIC_ID = "fabric";
 
     public static final Tag<Item> FORCE_REPAIR_COST_TAG = TagRegistry.item(new Identifier(MODID, "force_incremental_repair_cost"));
 
-    private static AnvilfixConfig config;
-
     public static AnvilfixConfig getConfig() {
-        return config;
+        return ConfigHandler.getConfig(AnvilfixConfig.class);
     }
 
     @Override
     public void onInitialize() {
-        reloadConfig();
-        if(FabricLoader.getInstance().isModLoaded(FABRIC_ID)) {
-            LOG.info("found fabric API, registering reload listener");
-            AnvilFixConfigReloadListener.init();
-        }
-    }
-
-    public static void reloadConfig() {
-        LOG.info("[{}] Reloading config", MODID);
-        Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
-        File configFile = new File(FabricLoader.getInstance().getConfigDirectory(), MODID + ".json");
-        if(!configFile.exists()) {
-            try(FileWriter writer = new FileWriter(configFile)) {
-                gson.toJson(new AnvilfixConfig(), writer);
-            }
-            catch (IOException e) {
-                LOG.error("unable to write config file to " + configFile.getAbsolutePath(), e);
-            }
-        }
-        try(FileReader reader = new FileReader(configFile)) {
-            config = gson.fromJson(reader, AnvilfixConfig.class);
-        }
-        catch (IOException e) {
-            LOG.error("unable to read config file from " + configFile.getAbsolutePath() + ", falling back to default values!", e);
-            config = new AnvilfixConfig();
-        }
+        ConfigHandler.registerConfig(MODID, AnvilfixConfig.class);
     }
 }

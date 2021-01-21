@@ -23,8 +23,6 @@
  */
 package io.github.onyxstudios.anvilfix.config;
 
-import com.google.gson.annotations.SerializedName;
-
 import io.github.onyxstudios.anvilfix.AnvilFix;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.ItemStack;
@@ -32,24 +30,40 @@ import net.minecraft.item.ItemStack;
 @SuppressWarnings("ALL")
 public class AnvilfixConfig {
 
-    @SerializedName("anvil_level_limit") private int levelLimit = -1;
+    private int levelLimit = -1;
 
-    @SerializedName("global_enchantment_level_limit") private short globalEnchantmentLimit = -1;
+    private short globalEnchantmentLevelLimit = -1;
 
-    @SerializedName("ignore_incremental_repair_cost") private boolean noIncrementalCost = true;
+    private boolean removeIncrementalRepairCost = true;
 
-    @SerializedName("stop_anvil_breaking") private boolean stopAnvilBreaking = false;
+    private boolean stopAnvilBreaking = false;
+
+    public void setLevelLimit(int levelLimit) {
+        this.levelLimit = levelLimit;
+    }
+
+    public void setGlobalEnchantmentLevelLimit(short globalEnchantmentLevelLimit) {
+        this.globalEnchantmentLevelLimit = globalEnchantmentLevelLimit;
+    }
+
+    public void setRemoveIncrementalRepairCost(boolean removeIncrementalRepairCost) {
+        this.removeIncrementalRepairCost = removeIncrementalRepairCost;
+    }
+
+    public void setStopAnvilBreaking(boolean stopAnvilBreaking) {
+        this.stopAnvilBreaking = stopAnvilBreaking;
+    }
 
     public int getLevelLimit() {
         return levelLimit != -1 ? levelLimit + 1 : Integer.MAX_VALUE;
     }
 
     public int getEnchantmentLimit(Enchantment enchantment) {
-        return globalEnchantmentLimit > 0 ? globalEnchantmentLimit : enchantment.getMaxLevel();
+        return globalEnchantmentLevelLimit > 0 ? globalEnchantmentLevelLimit : enchantment.getMaxLevel();
     }
 
     public boolean removeIncrementalCost(ItemStack stack) {
-        return noIncrementalCost && !stack.getItem().isIn(AnvilFix.FORCE_REPAIR_COST_TAG);
+        return removeIncrementalRepairCost && !stack.getItem().isIn(AnvilFix.FORCE_REPAIR_COST_TAG);
     }
 
     public boolean shouldStopAnvilBreaking() {

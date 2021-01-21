@@ -12,13 +12,12 @@ sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
 archivesBaseName = project.archive_name
-version = project.mod_version
 group = project.maven_group
 
 def ENV = System.getenv()
 def buildNumber = "+" + (ENV.BUILD_NUMBER ? ("build." + ENV.BUILD_NUMBER) : "custom")
 def buildMeta = (!ENV.TAG || ENV.TAG.endsWith("-beta") || ENV.TAG.endsWith("-alpha")) ? buildNumber : ""
-def modVersion = (ENV.TAG ?: version)
+def modVersion = (ENV.TAG ?: "development")
 version = "${modVersion}${buildMeta}-1.16"
 
 repositories {
@@ -36,11 +35,12 @@ dependencies {
     compileOnly "com.google.code.findbugs:jsr305:3.0.2"
     compileOnly "org.jetbrains:annotations:20.1.0"
 
-    modImplementation "io.github.GlassPane:Mesh-API:${project.mesh_verson}"
-    modImplementation include("io.github.GlassPane:Mesh-API:${}")
+    modImplementation "io.github.GlassPane:Mesh-API:${project.mesh_version}"
+    modImplementation include("io.github.GlassPane:Mesh:${project.mesh_version}")
     modImplementation include(fabricApi.module("fabric-resource-loader-v0", project.fabric_version))
     modImplementation include(fabricApi.module("fabric-tag-extensions-v0", project.fabric_version))
     modRuntime "io.github.prospector:modmenu:${modmenu_version}"
+    modRuntime "me.zeroeightsix:fiber:${project.fiber_version}"
 }
 
 processResources {
