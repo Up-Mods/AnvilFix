@@ -28,7 +28,11 @@ import com.google.gson.GsonBuilder;
 import io.github.onyxstudios.anvilfix.config.AnvilFixConfigReloadListener;
 import io.github.onyxstudios.anvilfix.config.AnvilfixConfig;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.tag.TagRegistry;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.item.Item;
+import net.minecraft.tag.Tag;
+import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -42,6 +46,9 @@ public class AnvilFix implements ModInitializer {
     public static final String MODID = "anvil_fix";
     private static final Logger LOG = LogManager.getLogger(MODID);
     private static final String FABRIC_ID = "fabric";
+
+    public static final Tag<Item> FORCE_REPAIR_COST_TAG = TagRegistry.item(new Identifier(MODID, "force_incremental_repair_cost"));
+
     private static AnvilfixConfig config;
 
     public static AnvilfixConfig getConfig() {

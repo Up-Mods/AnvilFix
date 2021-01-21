@@ -25,6 +25,7 @@ package io.github.onyxstudios.anvilfix.config;
 
 import com.google.gson.annotations.SerializedName;
 
+import io.github.onyxstudios.anvilfix.AnvilFix;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.ItemStack;
 
@@ -48,7 +49,7 @@ public class AnvilfixConfig {
     }
 
     public boolean removeIncrementalCost(ItemStack stack) {
-        return noIncrementalCost;
+        return noIncrementalCost && !stack.getItem().isIn(AnvilFix.FORCE_REPAIR_COST_TAG);
     }
 
     public boolean shouldStopAnvilBreaking() {

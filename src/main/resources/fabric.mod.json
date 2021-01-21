@@ -1,37 +1,44 @@
 {
-    "schemaVersion": 1,
-    "id": "anvil_fix",
-    "name": "AnvilFix",
-    "description": "tweaks for the Anvil",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "UpcraftLP",
-            "contact": {
-                "homepage": "https://twitter.com/UpcraftLP"
-            }
-        }
-    ],
-    "contact": {
-        "homepage": "https://www.curseforge.com/minecraft/mc-mods/anvil-fix",
-        "source": "https://github.com/OnyxStudios/AnvilFix",
-        "issues": "https://github.com/OnyxStudios/AnvilFix/issues"
-    },
-    "icon": "assets/anvil_fix/icon.png",
-    "version": "${version}",
-    "environment": "*",
-    "recommends": {
-        "fabric": "*"
-    },
-    "depends": {
-        "fabricloader": ">=0.7.2-"
-    },
-    "entrypoints": {
-        "main": [
-            "io.github.onyxstudios.anvilfix.AnvilFix"
-        ]
-    },
-    "mixins": [
-        "mixins.anvil_fix.json"
+  "schemaVersion": 1,
+  "id": "anvil_fix",
+  "name": "AnvilFix",
+  "description": "tweaks for the Anvil",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "UpcraftLP",
+      "contact": {
+        "github": "UpcraftLP",
+        "homepage": "https://upcraft.dev",
+        "twitter": "@UpcraftLP"
+      }
+    }
+  ],
+  "contact": {
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/anvil-fix",
+    "source": "https://github.com/OnyxStudios/AnvilFix",
+    "issues": "https://github.com/OnyxStudios/AnvilFix/issues"
+  },
+  "icon": "assets/anvil_fix/icon.png",
+  "version": "${version}",
+  "environment": "*",
+  "recommends": {
+    "fabric": "*",
+    "modmenu": "*"
+  },
+  "depends": {
+    "minecraft": "~1.16",
+    "fabricloader": ">=0.10",
+    "mesh": ">=0.5.0-alpha",
+    "fabric-resource-loader-v0": "*",
+    "fabric-tag-extensions-v0": "*"
+  },
+  "entrypoints": {
+    "main": [
+      "io.github.onyxstudios.anvilfix.AnvilFix"
     ]
+  },
+  "mixins": [
+    "mixins.anvil_fix.json"
+  ]
 }

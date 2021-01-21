@@ -4,7 +4,7 @@ import java.time.Year
 plugins {
     id 'java-library'
     id 'maven-publish'
-    id 'fabric-loom' version '0.4-SNAPSHOT'
+    id 'fabric-loom' version '0.5-SNAPSHOT'
     id 'net.minecrell.licenser' version '0.2.1'
 }
 
@@ -23,6 +23,10 @@ version = "${modVersion}${buildMeta}-1.16"
 
 repositories {
     jcenter()
+    maven {
+        name = "OnyxStudios"
+        url = "https://maven.onyxstudios.dev"
+    }
 }
 
 dependencies {
@@ -30,9 +34,12 @@ dependencies {
     mappings "net.fabricmc:yarn:${project.minecraft_version}+build.${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     compileOnly "com.google.code.findbugs:jsr305:3.0.2"
-    compileOnly "org.jetbrains:annotations:19.0.0"
+    compileOnly "org.jetbrains:annotations:20.1.0"
 
+    modImplementation "io.github.GlassPane:Mesh-API:${project.mesh_verson}"
+    modImplementation include("io.github.GlassPane:Mesh-API:${}")
     modImplementation include(fabricApi.module("fabric-resource-loader-v0", project.fabric_version))
+    modImplementation include(fabricApi.module("fabric-tag-extensions-v0", project.fabric_version))
     modRuntime "io.github.prospector:modmenu:${modmenu_version}"
 }
 
