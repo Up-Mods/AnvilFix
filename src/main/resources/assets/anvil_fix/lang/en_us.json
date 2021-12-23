@@ -1,6 +1,6 @@
 {
-  "config.anvil_fix.level_limit": "Anvil Level Limit",
-  "config.anvil_fix.global_enchantment_level_limit": "Maximum Enchantment Level",
-  "config.anvil_fix.remove_incremental_repair_cost": "Remove Incremental Repair Cost",
-  "config.anvil_fix.stop_anvil_breaking": "Stop Anvil Breaking"
+  "text.autoconfig.anvilfix.option.levelLimit": "Anvil Level Limit",
+  "text.autoconfig.anvilfix.option.globalEnchantmentLevelLimit": "Maximum Enchantment Level",
+  "text.autoconfig.anvilfix.option.removeIncrementalRepairCost": "Remove Incremental Repair Cost",
+  "text.autoconfig.anvilfix.option.stopAnvilBreaking": "Stop Anvil Breaking"
 }

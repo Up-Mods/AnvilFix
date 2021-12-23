@@ -23,7 +23,7 @@
  */
 package io.github.onyxstudios.anvilfix;
 
-import io.github.glasspane.mesh.api.util.config.ConfigHandler;
+import dev.upcraft.mesh.api.util.config.ConfigHandler;
 import io.github.onyxstudios.anvilfix.config.AnvilfixConfig;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.tag.TagRegistry;
