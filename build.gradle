@@ -1,15 +1,11 @@
-import java.nio.charset.StandardCharsets
-import java.time.Year
-
 plugins {
     id 'java-library'
     id 'maven-publish'
-    id 'fabric-loom' version '0.8-SNAPSHOT'
-    id 'net.minecrell.licenser' version '0.2.1'
+    id 'fabric-loom' version '0.10-SNAPSHOT'
 }
 
-sourceCompatibility = JavaVersion.VERSION_16
-targetCompatibility = JavaVersion.VERSION_16
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
 
 archivesBaseName = project.archive_name
 group = project.maven_group
@@ -18,7 +14,7 @@ def ENV = System.getenv()
 def buildNumber = "+" + (ENV.BUILD_NUMBER ? ("build." + ENV.BUILD_NUMBER) : "custom")
 def buildMeta = (!ENV.TAG || ENV.TAG.endsWith("-beta") || ENV.TAG.endsWith("-alpha")) ? buildNumber : ""
 def modVersion = (ENV.TAG ?: "development")
-version = "${modVersion}${buildMeta}-1.17"
+version = "${modVersion}${buildMeta}-1.18"
 
 repositories {
     maven {
@@ -60,6 +56,7 @@ processResources {
 }
 tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
+    options.release = 17
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
@@ -91,25 +88,5 @@ publishing {
                 }
             }
         }
-    }
-}
-
-license {
-    header = project.file("code_quality/MIT_HEADER.txt")
-    // Apply licenses only to main source set
-    sourceSets = [project.sourceSets.main]
-    include "**/*.java"
-    charset = StandardCharsets.UTF_8.name()
-
-    style {
-        java = "BLOCK_COMMENT"
-    }
-    newLine = false // Disables the empty line between the header and package name
-    //ignoreFailures = true //Ignore failures and only print a warning on license violations
-
-    //export variables
-    ext {
-        year = Year.now()
-        projectDisplayName = project.archivesBaseName
     }
 }

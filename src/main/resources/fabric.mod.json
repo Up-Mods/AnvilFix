@@ -27,9 +27,9 @@
     "modmenu": "*"
   },
   "depends": {
-    "minecraft": "~1.17",
-    "fabricloader": ">=0.10",
-    "mesh": ">=0.5.0-alpha",
+    "minecraft": "~1.18",
+    "fabricloader": ">=0.12",
+    "mesh": ">=0.19.0-alpha",
     "fabric-resource-loader-v0": "*",
     "fabric-tag-extensions-v0": "*"
   },
