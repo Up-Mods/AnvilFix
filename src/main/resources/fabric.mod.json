@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "anvil_fix",
   "name": "AnvilFix",
-  "description": "tweaks for the Anvil",
+  "description": "Vanilla Anvils - but better! This mod removes the level limit for combining Items",
   "license": "MIT",
   "authors": [
     {
@@ -24,18 +24,21 @@
   "environment": "*",
   "recommends": {
     "fabric": "*",
+    "mesh": ">=0.20.0-alpha",
     "modmenu": "*"
   },
   "depends": {
-    "minecraft": "~1.16",
-    "fabricloader": ">=0.10",
-    "mesh": ">=0.5.0-alpha",
-    "fabric-resource-loader-v0": "*",
-    "fabric-tag-extensions-v0": "*"
+    "minecraft": "~1.18.2",
+    "fabricloader": ">=0.13",
+    "cloth-config": "^6.0.0-",
+    "fabric-resource-loader-v0": "*"
   },
   "entrypoints": {
     "main": [
       "io.github.onyxstudios.anvilfix.AnvilFix"
+    ],
+    "modmenu": [
+      "io.github.onyxstudios.anvilfix.compat.AnvilfixModmenuCompat"
     ]
   },
   "mixins": [

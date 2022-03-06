@@ -24,46 +24,33 @@
 package io.github.onyxstudios.anvilfix.config;
 
 import io.github.onyxstudios.anvilfix.AnvilFix;
+import me.shedaniel.autoconfig.ConfigData;
+import me.shedaniel.autoconfig.annotation.Config;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.ItemStack;
 
 @SuppressWarnings("ALL")
-public class AnvilfixConfig {
+@Config(name = AnvilFix.MODID)
+public class AnvilfixConfig implements ConfigData {
 
     private int levelLimit = -1;
 
-    private short globalEnchantmentLevelLimit = -1;
+    private int globalEnchantmentLevelLimit = -1;
 
-    private boolean removeIncrementalRepairCost = true;
+    private boolean removeIncrementalRepairCost = false;
 
-    private boolean stopAnvilBreaking = false;
-
-    public void setLevelLimit(int levelLimit) {
-        this.levelLimit = levelLimit;
-    }
-
-    public void setGlobalEnchantmentLevelLimit(short globalEnchantmentLevelLimit) {
-        this.globalEnchantmentLevelLimit = globalEnchantmentLevelLimit;
-    }
-
-    public void setRemoveIncrementalRepairCost(boolean removeIncrementalRepairCost) {
-        this.removeIncrementalRepairCost = removeIncrementalRepairCost;
-    }
-
-    public void setStopAnvilBreaking(boolean stopAnvilBreaking) {
-        this.stopAnvilBreaking = stopAnvilBreaking;
-    }
+    private boolean stopAnvilBreaking = true;
 
     public int getLevelLimit() {
         return levelLimit != -1 ? levelLimit + 1 : Integer.MAX_VALUE;
     }
 
     public int getEnchantmentLimit(Enchantment enchantment) {
-        return globalEnchantmentLevelLimit > 0 ? globalEnchantmentLevelLimit : enchantment.getMaxLevel();
+        return globalEnchantmentLevelLimit >= 0 ? globalEnchantmentLevelLimit : enchantment.getMaxLevel();
     }
 
     public boolean removeIncrementalCost(ItemStack stack) {
-        return removeIncrementalRepairCost && !stack.getItem().isIn(AnvilFix.FORCE_REPAIR_COST_TAG);
+        return removeIncrementalRepairCost && !stack.isIn(AnvilFix.FORCE_REPAIR_COST_TAG);
     }
 
     public boolean shouldStopAnvilBreaking() {

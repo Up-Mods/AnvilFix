@@ -21,29 +21,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.github.onyxstudios.anvilfix;
+package io.github.onyxstudios.anvilfix.compat;
 
+import com.terraformersmc.modmenu.api.ConfigScreenFactory;
+import com.terraformersmc.modmenu.api.ModMenuApi;
 import io.github.onyxstudios.anvilfix.config.AnvilfixConfig;
 import me.shedaniel.autoconfig.AutoConfig;
-import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
-import net.fabricmc.api.ModInitializer;
-import net.minecraft.item.Item;
-import net.minecraft.tag.TagKey;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
-public class AnvilFix implements ModInitializer {
-
-    public static final String MODID = "anvil_fix";
-
-    public static final TagKey<Item> FORCE_REPAIR_COST_TAG = TagKey.of(Registry.ITEM_KEY, new Identifier(MODID, "force_incremental_repair_cost"));
-
-    public static AnvilfixConfig getConfig() {
-        return AutoConfig.getConfigHolder(AnvilfixConfig.class).getConfig();
-    }
+public class AnvilfixModmenuCompat implements ModMenuApi {
 
     @Override
-    public void onInitialize() {
-        AutoConfig.register(AnvilfixConfig.class, JanksonConfigSerializer::new);
+    public ConfigScreenFactory<?> getModConfigScreenFactory() {
+        return parent -> AutoConfig.getConfigScreen(AnvilfixConfig.class, parent).get();
     }
 }

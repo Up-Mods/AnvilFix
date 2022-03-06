@@ -7,13 +7,13 @@ on:
 
 jobs:
   publish:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Set up JDK 1.8
+      - name: Set up JDK 17
         uses: actions/setup-java@v1
         with:
-          java-version: 1.8
+          java-version: 17
       - name: Get current time
         uses: srfrnk/current-time@master
         id: current-time
@@ -35,18 +35,25 @@ jobs:
         run: chmod +x gradlew
       - name: Assemble jar with Gradle
         env:
-          BUILD_NUMBER: ${{ steps.current-time.outputs.formattedTime }}
+          BUILD_TIME: ${{ steps.current-time.outputs.formattedTime }}
+          BUILD_NUMBER: ${{ github.run_number }}
         run: ./gradlew assemble
+      - name: Publish
+        id: publish_release_assets
+        run: ./gradlew publish
+        env:
+          BUILD_TIME: ${{ steps.current-time.outputs.formattedTime }}
+          BUILD_NUMBER: ${{ github.run_number }}
+          MAVEN_UPLOAD_URL: ${{ secrets.ONYX_MAVEN_UPLOAD_URL }}
+          MAVEN_UPLOAD_USER: ${{ secrets.ONYX_MAVEN_USERNAME }}
+          MAVEN_UPLOAD_PASSWORD: ${{ secrets.ONYX_MAVEN_ACCESS_TOKEN }}
+          MODRINTH_USER: ${{ secrets.MODRINTH_USER }}
+          MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+          CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_TOKEN }}
       - name: Upload release assets
-        id: upload-release-asset
+        id: upload_release_assets
         uses: AButler/upload-release-assets@v2.0
         with:
           release-tag: ${{ env.TAG }}
           repo-token: ${{ github.token }}
           files: 'build/libs/*[!-dev].jar'
-      - name: Deploy to Onyx Maven
-        run: ./gradlew publish
-        env:
-          MAVEN_USER: ${{ secrets.MAVEN_USER }}
-          MAVEN_PASS: ${{ secrets.MAVEN_PASS }}
-          MAVEN_URL: ${{ secrets.MAVEN_URL }}
