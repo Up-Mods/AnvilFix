@@ -27,16 +27,16 @@ import io.github.onyxstudios.anvilfix.config.AnvilfixConfig;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
-import net.minecraft.item.Item;
-import net.minecraft.tag.TagKey;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.core.Registry;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
+import net.minecraft.resources.ResourceLocation;
 
 public class AnvilFix implements ModInitializer {
 
     public static final String MODID = "anvil_fix";
 
-    public static final TagKey<Item> FORCE_REPAIR_COST_TAG = TagKey.of(Registry.ITEM_KEY, new Identifier(MODID, "force_incremental_repair_cost"));
+    public static final TagKey<Item> FORCE_REPAIR_COST_TAG = TagKey.create(Registry.ITEM_REGISTRY, new ResourceLocation(MODID, "force_incremental_repair_cost"));
 
     public static AnvilfixConfig getConfig() {
         return AutoConfig.getConfigHolder(AnvilfixConfig.class).getConfig();

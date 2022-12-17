@@ -26,8 +26,8 @@ package io.github.onyxstudios.anvilfix.config;
 import io.github.onyxstudios.anvilfix.AnvilFix;
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
 
 @SuppressWarnings("ALL")
 @Config(name = AnvilFix.MODID)
@@ -50,7 +50,7 @@ public class AnvilfixConfig implements ConfigData {
     }
 
     public boolean removeIncrementalCost(ItemStack stack) {
-        return removeIncrementalRepairCost && !stack.isIn(AnvilFix.FORCE_REPAIR_COST_TAG);
+        return removeIncrementalRepairCost && !stack.is(AnvilFix.FORCE_REPAIR_COST_TAG);
     }
 
     public boolean shouldStopAnvilBreaking() {

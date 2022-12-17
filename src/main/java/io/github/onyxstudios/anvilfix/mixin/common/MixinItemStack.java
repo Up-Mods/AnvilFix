@@ -24,7 +24,7 @@
 package io.github.onyxstudios.anvilfix.mixin.common;
 
 import io.github.onyxstudios.anvilfix.AnvilFix;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -33,7 +33,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(ItemStack.class)
 public abstract class MixinItemStack {
 
-    @Inject(method = "getRepairCost", at = @At("RETURN"), cancellable = true)
+    @Inject(method = "getBaseRepairCost", at = @At("RETURN"), cancellable = true)
     private void getRepairCost(CallbackInfoReturnable<Integer> cir) {
         if(cir.getReturnValueI() > 0 && AnvilFix.getConfig().removeIncrementalCost((ItemStack) (Object) this)) {
             cir.setReturnValue(0);

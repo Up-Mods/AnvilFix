@@ -24,23 +24,23 @@
 package io.github.onyxstudios.anvilfix.mixin.common;
 
 import io.github.onyxstudios.anvilfix.AnvilFix;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.screen.AnvilScreenHandler;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.inventory.AnvilMenu;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-@Mixin(AnvilScreenHandler.class)
+@Mixin(AnvilMenu.class)
 public class MixinAnvilContainer {
 
-    @ModifyConstant(method = "updateResult", constant = @Constant(intValue = 40, ordinal = 2))
+    @ModifyConstant(method = "createResult", constant = @Constant(intValue = 40, ordinal = 2))
     private int modifyInt(int input) {
         return AnvilFix.getConfig().getLevelLimit();
     }
 
-    @Redirect(method = "updateResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/enchantment/Enchantment;getMaxLevel()I"))
+    @Redirect(method = "createResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/enchantment/Enchantment;getMaxLevel()I"))
     private int getMaximumLevelProxy(Enchantment enchantment) {
         return AnvilFix.getConfig().getEnchantmentLimit(enchantment);
     }

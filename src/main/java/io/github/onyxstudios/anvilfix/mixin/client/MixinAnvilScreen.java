@@ -24,7 +24,7 @@
 package io.github.onyxstudios.anvilfix.mixin.client;
 
 import io.github.onyxstudios.anvilfix.AnvilFix;
-import net.minecraft.client.gui.screen.ingame.AnvilScreen;
+import net.minecraft.client.gui.screens.inventory.AnvilScreen;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
@@ -32,7 +32,7 @@ import org.spongepowered.asm.mixin.injection.ModifyConstant;
 @Mixin(AnvilScreen.class)
 public class MixinAnvilScreen {
 
-    @ModifyConstant(method = "drawForeground", constant = @Constant(intValue = 40, ordinal = 0))
+    @ModifyConstant(method = "renderLabels", constant = @Constant(intValue = 40, ordinal = 0))
     private int modifyInt(int input) {
         return AnvilFix.getConfig().getLevelLimit();
     }

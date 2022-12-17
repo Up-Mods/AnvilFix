@@ -6,7 +6,7 @@ import java.time.Year
 plugins {
     id "java-library"
     id "maven-publish"
-    id "fabric-loom" version "0.11.+"
+    id "fabric-loom" version "1.0-SNAPSHOT"
     id "org.cadixdev.licenser" version "0.6.1"
     id "com.modrinth.minotaur" version "1.1.0"
     id "com.matthewprenger.cursegradle" version "1.4.0"
@@ -22,7 +22,8 @@ archivesBaseName = "AnvilFix"
 
 boolean isPreviewBuild = !ENV.TAG || ENV.TAG.matches(".+-.+")
 def buildNumber = !ENV.TAG ? ("${ENV.BUILD_NUMBER ? "build.${ENV.BUILD_NUMBER}" : buildTime}-${project.minecraft_version}") : ""
-version = (ENV.TAG ?: "development") + ((isPreviewBuild && !ENV.TAG) ? "+${buildNumber}" : "")
+//version = (ENV.TAG ?: "development") + ((isPreviewBuild && !ENV.TAG) ? "+${buildNumber}" : "")
+version = "0.0.1a-1.19.2-port-by-wolftm"
 
 java {
     withSourcesJar()
@@ -49,14 +50,14 @@ repositories {
 
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     compileOnly 'org.jetbrains:annotations:22.0.0'
 
     // FIXME not updated yet
     //modImplementation "dev.upcraft:Mesh-API:${project.mesh_version}"
     //modRuntimeOnly "dev.upcraft:Mesh:${project.mesh_version}"
-    modImplementation ("me.shedaniel.cloth:cloth-config-fabric:6.2.57") {
+    modImplementation ("me.shedaniel.cloth:cloth-config-fabric:8.2.88") {
         exclude group: "net.fabricmc.fabric-api"
     }
 
