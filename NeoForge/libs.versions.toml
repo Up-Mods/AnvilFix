@@ -1,0 +1,14 @@
+[versions]
+neogradle = "6.+"
+mixingradle = "0.7.+"
+librarian = "1.+"
+
+neoforge = "1.20.1-47.1.104"
+
+[libraries]
+neoforge = { module = "net.neoforged:forge", version.ref = "neoforge" }
+
+[plugins]
+neogradle = { id = "net.neoforged.gradle", version.ref = "neogradle" }
+mixingradle = { id = "org.spongepowered.mixin", version.ref = "mixingradle" }
+librarian = { id = "org.parchmentmc.librarian.forgegradle", version.ref = "librarian" }

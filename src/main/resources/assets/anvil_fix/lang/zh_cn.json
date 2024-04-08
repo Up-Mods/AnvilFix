@@ -1,7 +1,0 @@
-{
-  "text.autoconfig.anvil_fix.title": "铁砧修复",
-  "text.autoconfig.anvil_fix.option.levelLimit": "铁砧等级上限",
-  "text.autoconfig.anvil_fix.option.globalEnchantmentLevelLimit": "所需等级上限",
-  "text.autoconfig.anvil_fix.option.removeIncrementalRepairCost": "修复消耗不增长",
-  "text.autoconfig.anvil_fix.option.stopAnvilBreaking": "铁砧不再破损"
-}

@@ -1,0 +1,19 @@
+plugins {
+	alias libs.plugins.vanilla.gradle
+}
+
+minecraft {
+	version(libs.versions.minecraft.get())
+	if (file("src/main/resources/${mod_id}.accesswidener").exists()) {
+		accessWideners(file("src/main/resources/${mod_id}.accesswidener"))
+	}
+}
+
+dependencies {
+	compileOnly libs.bundles.mixin
+    compileOnly libs.jetbrains.annotations
+
+	implementation libs.resourcefulconfig
+
+	// compileOnly "${libs.emi.asProvider().get()}:api"
+}

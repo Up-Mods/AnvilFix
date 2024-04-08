@@ -1,166 +1,198 @@
-import com.modrinth.minotaur.TaskModrinthUpload
-
-import java.nio.charset.StandardCharsets
-import java.time.Year
-
 plugins {
-    id "java-library"
-    id "maven-publish"
-    id "fabric-loom" version "0.11.+"
-    id "org.cadixdev.licenser" version "0.6.1"
-    id "com.modrinth.minotaur" version "1.1.0"
-    id "com.matthewprenger.cursegradle" version "1.4.0"
+    id 'idea'
+	// Required for NeoGradle
+	id "org.jetbrains.gradle.plugin.idea-ext" version "1.1.7"
+    id 'maven-publish'
 }
-
-def ENV = System.getenv()
-def buildTime = ENV.BUILD_TIME ?: new Date().format('yyyyMMddHHmmss')
 
 def javaVersion = 17
 
-group = "io.github.onyxstudios"
-archivesBaseName = "AnvilFix"
+group = maven_group_id
+
+def ENV = System.getenv()
+def NOW = new Date()
+def buildTime = ENV.BUILD_TIME ?: NOW.format('yyyyMMddHHmmss')
 
 boolean isPreviewBuild = !ENV.TAG || ENV.TAG.matches(".+-.+")
-def buildNumber = !ENV.TAG ? ("${ENV.BUILD_NUMBER ? "build.${ENV.BUILD_NUMBER}" : buildTime}-${project.minecraft_version}") : ""
-version = (ENV.TAG ?: "development") + ((isPreviewBuild && !ENV.TAG) ? "+${buildNumber}" : "")
+def buildNumber = !ENV.TAG ? ("${ENV.BUILD_NUMBER ? "build.${ENV.BUILD_NUMBER}" : buildTime}") : ""
+version = (ENV.TAG ?: "${libs.versions.minecraft.get()}-development") + ((isPreviewBuild && !ENV.TAG) ? "+${buildNumber}" : "")
 
-java {
-    withSourcesJar()
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(javaVersion)
-    }
-}
+def mod_name = rootProject.name.replaceAll("-", "_").toLowerCase(Locale.ROOT)
 
-repositories {
-    mavenCentral()
-    maven {
-        name = "OnyxStudios"
-        url = "https://maven.onyxstudios.dev"
-    }
-    maven {
-        name = "TerraformersMC"
-        url = "https://maven.terraformersmc.com/releases"
-    }
-    maven {
-        name = "Shedaniel"
-        url = "https://maven.shedaniel.me"
-    }
-}
+println("Building ${project.name} ${version}")
 
-dependencies {
-    minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-    compileOnly 'org.jetbrains:annotations:22.0.0'
+subprojects {
+	apply plugin: 'java'
+	project.group = rootProject.group
+	project.version = rootProject.version
 
-    // FIXME not updated yet
-    //modImplementation "dev.upcraft:Mesh-API:${project.mesh_version}"
-    //modRuntimeOnly "dev.upcraft:Mesh:${project.mesh_version}"
-    modImplementation ("me.shedaniel.cloth:cloth-config-fabric:6.2.57") {
-        exclude group: "net.fabricmc.fabric-api"
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(javaVersion)
+            vendor = JvmVendorSpec.MICROSOFT
+        }
+        withSourcesJar()
+//        withJavadocJar()
     }
 
-    modImplementation include(fabricApi.module("fabric-resource-loader-v0", project.fabric_version))
-    modImplementation "com.terraformersmc:modmenu:${modmenu_version}"
-}
+	javadoc {
+		options.tags = ["reason"]
+	}
 
-processResources {
-    inputs.property "version", project.version
-
-    filesMatching("fabric.mod.json") {
-        expand "version": project.version
+    base {
+	    archivesName = "${rootProject.name}-${project.name}"
     }
-}
 
-tasks.withType(JavaCompile) {
-    options.encoding = "UTF-8"
-}
+	jar {
+		from(rootProject.file("LICENSE.md")) {
+			rename { "LICENSE_${mod_name}.md" }
+		}
+		manifest {
+			attributes([
+				'Specification-Title'       : rootProject.name,
+				'Specification-Version'     : project.version,
+				'Implementation-Title'      : "${rootProject.name}-${project.name}",
+                'Maven-Artifact'            : "${maven_group_id}:${rootProject.name}-${project.name}:${project.version}",
+				'Implementation-Version'    : project.version,
+				'Implementation-Timestamp'  : NOW.format("yyyy-MM-dd'T'HH:mm:ssZ"),
+				'Timestamp'                 : NOW.toInstant().toEpochMilli(),
+				'Built-On-Java'             : "${System.getProperty('java.vm.version')} (${System.getProperty('java.vm.vendor')})",
+				'Built-On-Minecraft'        : libs.versions.minecraft.get()
+			])
+		}
+	}
 
-jar {
-    from "LICENSE.md"
+	sourcesJar {
+		from(rootProject.file("LICENSE.md")) {
+			rename { "LICENSE_${mod_name}.md" }
+		}
+	}
+
+	repositories {
+		mavenCentral()
+
+		maven {
+			name = "Sponge"
+			url = "https://repo.spongepowered.org/repository/maven-public"
+			content {
+				includeGroup "org.spongepowered"
+			}
+		}
+
+		maven {
+			name = "ParchmentMC"
+			url = "https://maven.parchmentmc.org"
+			content {
+				includeGroupByRegex "org\\.parchmentmc(\\..*)?"
+			}
+		}
+
+		maven {
+			name = "Quilt"
+			url = "https://maven.quiltmc.org/repository/release"
+		}
+
+		maven {
+			name = "Fabric"
+			url = "https://maven.fabricmc.net"
+		}
+
+		maven {
+			name = 'NeoForge'
+			url = 'https://maven.neoforged.net/releases'
+		}
+
+		maven {
+			name = "Up-Mods"
+			url = "https://maven.uuid.gg/releases"
+		}
+
+		maven {
+			name = "TeamResourceful"
+			url = "https://maven.teamresourceful.com/repository/maven-releases"
+		}
+
+		maven {
+			name "TerraformersMC"
+			url "https://maven.terraformersmc.com/releases"
+		}
+
+		maven {
+			name "Modrinth"
+			url "https://api.modrinth.com/maven"
+			content {
+				includeGroup "maven.modrinth"
+			}
+		}
+
+        maven {
+            name = "CurseMaven"
+            url = "https://www.cursemaven.com"
+            content {
+                includeGroup "curse.maven"
+            }
+        }
+	}
+
+	tasks.withType(JavaCompile).configureEach {
+		it.options.encoding = "UTF-8"
+		it.options.release.set(javaVersion)
+	}
+
+	processResources {
+        filteringCharset "UTF-8"
+
+		def expandProps = [
+			"version"                       : version,
+			"maven_group_id"                : maven_group_id,
+			"mod_id"                        : mod_id,
+			"mod_display_name"              : mod_display_name,
+			"mod_description"               : mod_description,
+			"sources_url"                   : sources_url,
+            "issues_url"                    : issues_url,
+			"license_url"					: license_url,
+			"discord_url"                   : discord_url,
+			"homepage_url"                  : homepage_url,
+			"minecraft_version"             : libs.versions.minecraft.get(),
+			"curseforge_id"					: curseforge_id,
+			"modrinth_id"					: modrinth_id,
+
+			"quilt_loader_version"          : quilt.versions.quilt.loader.get(),
+		]
+
+		filesMatching(['pack.mcmeta', '*.mod.json', 'META-INF/mods.toml', '*.mixins.json']) {
+			expand expandProps
+		}
+		inputs.properties(expandProps)
+	}
+
+	// Disables Gradle's custom module metadata from being published to maven. The
+	// metadata includes mapped dependencies which are not reasonably consumable by
+	// other mod developers.
+	tasks.withType(GenerateModuleMetadata).configureEach {
+		enabled = false
+	}
+
+    publishing {
+        publications {
+            "mavenJava${project.name}"(MavenPublication) {
+				artifactId "${rootProject.name}-${project.name}"
+				from components.java
+			}
+        }
+    }
 }
 
 publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-        }
-    }
-
     repositories {
-        if(ENV.MAVEN_URL && ENV.MAVEN_USER && ENV.MAVEN_PASS) {
+        if (ENV.MAVEN_UPLOAD_URL) {
             maven {
-                url = ENV.MAVEN_URL
+                url = ENV.MAVEN_UPLOAD_URL
                 credentials {
-                    username = ENV.MAVEN_USER
-                    password = ENV.MAVEN_PASS
+                    username = ENV.MAVEN_UPLOAD_USERNAME
+                    password = ENV.MAVEN_UPLOAD_PASSWORD
                 }
             }
         }
     }
-}
-
-license {
-    header = project.file("code_quality/MIT_HEADER.txt")
-    include "**/*.java"
-    charset = StandardCharsets.UTF_8.name()
-
-    style {
-        java = "BLOCK_COMMENT"
-    }
-    newLine = false // Disables the empty line between the header and package name
-    //ignoreFailures = true //Ignore failures and only print a warning on license violations
-
-    //export variables
-    properties {
-        year = Year.now()
-        projectDisplayName = project.archivesBaseName
-    }
-}
-
-curseforge {
-    apiKey = ENV.CURSEFORGE_TOKEN ?: "invalid"
-    project {
-        id = project.curseforge_id
-        releaseType = isPreviewBuild ? ((ENV.TAG && ENV.TAG.contains("-beta")) ? "beta" : "alpha") : "release"
-        "${project.curseforge_game_versions}".split(",").each {
-            addGameVersion(it)
-        }
-        addGameVersion("Fabric") // set ModLoader to Fabric
-        addGameVersion("Java ${javaVersion}")
-
-        mainArtifact(remapJar) {
-            displayName = "${archivesBaseName} ${ENV.TAG ?: version}"
-            relations {
-                requiredDependency 'fabric-api'
-                embeddedLibrary 'cloth-config'
-            }
-        }
-    }
-
-    options {
-        forgeGradleIntegration = false
-    }
-}
-
-task publishToModrinth(type: TaskModrinthUpload, dependsOn: assemble) {
-    if (ENV.MODRINTH_TOKEN) {
-        token = ENV.MODRINTH_TOKEN
-    }
-    projectId = project.modrinth_id
-    uploadFile = remapJar
-    versionNumber = ENV.TAG ?: version
-    versionName = versionNumber // need this here because the Modrinth API doesn't do that by default
-    releaseType = isPreviewBuild ? ((ENV.TAG && ENV.TAG.contains("-beta")) ? "beta" : "alpha") : "release"
-    "${project.modrinth_game_versions}".split(",").each {
-        addGameVersion(it)
-    }
-    addLoader("fabric")
-}
-
-if (ENV.MODRINTH_TOKEN) {
-    tasks.publish.dependsOn(publishToModrinth)
-}
-if (ENV.CURSEFORGE_TOKEN) {
-    tasks.publish.dependsOn(tasks.curseforge)
 }

@@ -1,0 +1,7 @@
+{
+  "config.anvil_fix.level_limit": "Anvil Level Limit",
+  "config.anvil_fix.global_enchantment_level_limit": "Maximum Enchantment Level",
+  "config.anvil_fix.remove_incremental_repair_cost": "Remove Incremental Repair Cost",
+  "config.anvil_fix.stop_anvil_breaking_on_craft": "Stop Anvils Breaking When Crafting",
+  "config.anvil_fix.stop_anvil_breaking_on_fall": "Stop Anvils Breaking When Falling"
+}

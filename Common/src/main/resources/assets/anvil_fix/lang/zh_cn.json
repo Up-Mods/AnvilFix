@@ -1,0 +1,7 @@
+{
+  "config.anvil_fix.level_limit": "铁砧等级上限",
+  "config.anvil_fix.global_enchantment_level_limit": "所需等级上限",
+  "config.anvil_fix.remove_incremental_repair_cost": "修复消耗不增长",
+  "config.anvil_fix.stop_anvil_breaking_on_craft": "铁砧不再破损",
+  "config.anvil_fix.stop_anvil_breaking_on_fall": "Stop Anvils Breaking When Falling"
+}
