@@ -12,6 +12,7 @@ logoFile = "icon.png" #optional
 #credits = "" #optional
 authors = "Up" #optional
 description = '''${mod_description}''' #mandatory (Supports multiline text)
+displayTest = "IGNORE_SERVER_VERSION"
 
 [[mixins]]
 config = "${mod_id}.mixins.json"
