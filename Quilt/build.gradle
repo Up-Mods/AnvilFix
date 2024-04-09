@@ -23,12 +23,15 @@ dependencies {
 
     compileOnly project(":Common")
 
+    modImplementation libs.sparkweave.quilt
+
     modImplementation libs.resourcefulconfig.fabric
 
     modCompileOnly quilt.modmenu
     modLocalRuntime quilt.modmenu
 
     // modCompileOnly "${libs.emi.fabric.get()}:api"
+	modLocalRuntime libs.emi.fabric
 }
 
 loom {

@@ -22,9 +22,10 @@ config = "${mod_id}.neoforge.mixins.json"
 # https://docs.neoforged.net/docs/gettingstarted/modfiles#dependency-configurations
 [dependencies]
     "${mod_id}" = [
-        { modId = "forge", mandatory = true, versionRange = "*", ordering = "NONE", side = "BOTH", mc-publish = { ignore = true } },
-        { modId = "minecraft", mandatory = true, versionRange = "[${minecraft_version}]", ordering = "NONE", side = "BOTH" },
-        { modId = "resourcefulconfig", mandatory = true, versionRange = "*", ordering = "NONE", side = "BOTH", mc-publish = { curseforge = "714059", modrinth = "M1953qlQ" } },
+        { modId = "neoforge", type = "required", versionRange = "*", ordering = "NONE", side = "BOTH", mc-publish = { ignore = true } },
+        { modId = "minecraft", type = "required", versionRange = "[${minecraft_version}]", ordering = "NONE", side = "BOTH" },
+        { modId = "sparkweave", type = "required", versionRange = "*", ordering = "NONE", side = "BOTH", mc-publish = { curseforge = "911456", modrinth = "nf68xfAw" } },
+        { modId = "resourcefulconfig", type = "required", versionRange = "*", ordering = "NONE", side = "BOTH", mc-publish = { curseforge = "714059", modrinth = "M1953qlQ" } },
     ]
 
 # Features are specific properties of the game environment, that you may want to declare you require. This example declares

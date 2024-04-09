@@ -23,8 +23,7 @@
       "icon": "icon.png"
     },
     "entrypoints": {
-      "init": "dev.upcraft.anvilfix.quilt.entrypoints.Main",
-      "modmenu": "dev.upcraft.anvilfix.quilt.entrypoints.Modmenu"
+      "init": "dev.upcraft.anvilfix.quilt.entrypoints.Main"
     },
     "depends": [
       {
@@ -41,6 +40,13 @@
       {
         "id": "minecraft",
         "versions": "=${minecraft_version}"
+      },
+      {
+        "id": "sparkweave",
+        "mc-publish": {
+          "curseforge": "911456",
+          "modrinth": "nf68xfAw"
+        }
       },
       {
         "id": "resourcefulconfig",

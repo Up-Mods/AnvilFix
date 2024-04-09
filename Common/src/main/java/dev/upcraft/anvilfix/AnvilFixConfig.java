@@ -1,41 +1,40 @@
 package dev.upcraft.anvilfix;
 
-import com.teamresourceful.resourcefulconfig.common.annotations.Config;
-import com.teamresourceful.resourcefulconfig.common.annotations.ConfigEntry;
-import com.teamresourceful.resourcefulconfig.common.annotations.IntRange;
-import com.teamresourceful.resourcefulconfig.common.config.EntryType;
-import com.teamresourceful.resourcefulconfig.web.annotations.Link;
-import com.teamresourceful.resourcefulconfig.web.annotations.WebInfo;
+import com.teamresourceful.resourcefulconfig.api.annotations.Config;
+import com.teamresourceful.resourcefulconfig.api.annotations.ConfigEntry;
+import com.teamresourceful.resourcefulconfig.api.annotations.ConfigInfo;
+import com.teamresourceful.resourcefulconfig.api.annotations.ConfigOption;
+import com.teamresourceful.resourcefulconfig.api.types.options.EntryType;
 
-@WebInfo(
-        title = "AnvilFix",
-        description = "Vanilla Anvils - but better! This mod removes the level limit for combining Items",
+@ConfigInfo(
+        titleTranslation = "config.anvil_fix.title",
+        descriptionTranslation = "config.anvil_fix.description",
         links = {
-                @Link(
+                @ConfigInfo.Link(
                         value = "https://modrinth.com/mod/EB79Qy8k",
                         icon = "modrinth",
-                        title = "Modrinth"
+                        text = "Modrinth"
                 ),
-                @Link(
+                @ConfigInfo.Link(
                         value = "https://curseforge.com/projects/305480",
                         icon = "curseforge",
-                        title = "Curseforge"
+                        text = "Curseforge"
                 ),
-                @Link(
+                @ConfigInfo.Link(
                         value = "https://github.com/Up-Mods/AnvilFix",
                         icon = "github",
-                        title = "Github"
+                        text = "Github"
                 )
         }
 )
 @Config(AnvilFix.MODID)
 public final class AnvilFixConfig {
 
-    @IntRange(min = -1, max = 255)
+    @ConfigOption.Range(min = -1, max = 255)
     @ConfigEntry(id = "level_limit", type = EntryType.INTEGER, translation = "config.anvil_fix.level_limit")
     public static int levelLimit = -1;
 
-    @IntRange(min = -1, max = 255)
+    @ConfigOption.Range(min = -1, max = 255)
     @ConfigEntry(id = "global_enchantment_level_limit", type = EntryType.INTEGER, translation = "config.anvil_fix.global_enchantment_level_limit")
     public static int globalEnchantmentLevelLimit = -1;
 

@@ -1,11 +1,11 @@
 [versions]
 # The latest versions are available at https://lambdaurora.dev/tools/import_quilt.html
-quilt_loom = "1.5.+"
+quilt_loom = "1.6.+"
 
 quilt_loader = "0.24.0"
-quilted_fabric_api = "7.5.0+0.91.0-1.20.1"
+quilted_fabric_api = "9.0.0-alpha.7+0.96.11-1.20.4"
 
-modmenu = "7.2.2"
+modmenu = "9.1.0-beta.1"
 
 [libraries]
 quilt_loader = { module = "org.quiltmc:quilt-loader", version.ref = "quilt_loader" }
