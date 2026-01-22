@@ -2,10 +2,6 @@ pluginManagement {
     repositories {
         gradlePluginPortal()
         maven {
-            name = 'Quilt'
-            url = 'https://maven.quiltmc.org/repository/release'
-        }
-        maven {
 			name = 'NeoForge'
 			url = 'https://maven.neoforged.net/releases'
 		}
@@ -22,23 +18,9 @@ pluginManagement {
 }
 
 plugins {
-    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.8.0'
-}
-
-dependencyResolutionManagement {
-    versionCatalogs {
-        libs {
-            from(files("./Common/libs.versions.toml"))
-        }
-        quilt {
-            from(files("./Quilt/libs.versions.toml"))
-        }
-        neoforge {
-            from(files("./NeoForge/libs.versions.toml"))
-        }
-    }
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
 }
 
 rootProject.name = 'AnvilFix'
 
-include 'Common', 'NeoForge', 'Quilt'
+include 'Common', 'Fabric', 'Forge'

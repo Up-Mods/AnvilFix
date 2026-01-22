@@ -1,0 +1,67 @@
+[versions]
+minecraft = "1.20.1"
+
+# https://parchmentmc.org/docs/getting-started
+parchment_minecraft = "1.20.1"
+parchment_mappings = "2023.09.03"
+
+# https://projects.neoforged.net/neoforged/moddevgradle
+moddevgradle_legacy = "2.0.140"
+
+# Forge
+forge = "47.4.16"
+
+# Fabric
+# https://fabricmc.net/develop
+fabric_loom = "1.14.10" # https://maven.fabricmc.net/fabric-loom/fabric-loom.gradle.plugin
+fabric_loader = "0.18.4"
+fabric_api = "0.92.7+1.20.1"
+
+# Minecraft dependencies
+jetbrains_annotations = "26.0.2-1"
+mixin = "0.8.5"
+mixinextras = "0.5.3"
+asm = "9.6"
+
+# Mods
+# https://modrinth.com/mod/emi/versions
+emi = "1.1.22+1.20.1"
+# https://modrinth.com/mod/modmenu/versions
+modmenu = "7.2.2"
+# https://beehive.sh/mod/resourcefulconfig/versions
+resourcefulconfig = "2.1.3"
+
+[libraries]
+# Fabric
+fabric_loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric_loader" }
+fabric_api = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fabric_api" }
+
+# Minecraft dependencies
+minecraft = { module = "com.mojang:minecraft", version.ref = "minecraft" }
+mixin = { module = "org.spongepowered:mixin", version.ref = "mixin" }
+mixinextras_common = { module = "io.github.llamalad7:mixinextras-common", version.ref = "mixinextras" }
+mixinextras_forge = { module = "io.github.llamalad7:mixinextras-forge", version.ref = "mixinextras" }
+asm = { module = "org.ow2.asm:asm", version.ref = "asm" }
+asm_analysis = { module = "org.ow2.asm:asm-analysis", version.ref = "asm" }
+asm_commons = { module = "org.ow2.asm:asm-commons", version.ref = "asm" }
+asm_tree = { module = "org.ow2.asm:asm-tree", version.ref = "asm" }
+asm_util = { module = "org.ow2.asm:asm-util", version.ref = "asm" }
+jetbrains_annotations = { module = "org.jetbrains:annotations", version.ref = "jetbrains_annotations" }
+
+resourcefulconfig = { module = "com.teamresourceful.resourcefulconfig:resourcefulconfig-common-1.20.1", version.ref = "resourcefulconfig" }
+resourcefulconfig_fabric = { module = "com.teamresourceful.resourcefulconfig:resourcefulconfig-fabric-1.20.1", version.ref = "resourcefulconfig" }
+resourcefulconfig_forge = { module = "com.teamresourceful.resourcefulconfig:resourcefulconfig-forge-1.20.1", version.ref = "resourcefulconfig" }
+
+emi = { module = "dev.emi:emi-xplat-mojmap", version.ref = "emi" }
+emi_forge = { module = "dev.emi:emi-forge", version.ref = "emi" }
+emi_fabric = { module = "dev.emi:emi-fabric", version.ref = "emi" }
+
+modmenu_fabric = { module = "com.terraformersmc:modmenu", version.ref = "modmenu" }
+
+[bundles]
+mixin = ["mixin", "mixinextras_common", "asm", "asm_analysis", "asm_commons", "asm_tree", "asm_util"]
+
+[plugins]
+moddevgradle_legacy = { id = "net.neoforged.moddev.legacyforge", version.ref = "moddevgradle_legacy" }
+fabric_loom = { id = "fabric-loom", version.ref = "fabric_loom" }
+fabric_loom_remap = { id = "net.fabricmc.fabric-loom-remap", version.ref = "fabric_loom" }

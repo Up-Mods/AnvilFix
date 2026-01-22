@@ -1,7 +1,5 @@
 plugins {
     id 'idea'
-	// Required for NeoGradle
-	id "org.jetbrains.gradle.plugin.idea-ext" version "1.1.7"
     id 'maven-publish'
 }
 
@@ -32,7 +30,6 @@ subprojects {
             vendor = JvmVendorSpec.MICROSOFT
         }
         withSourcesJar()
-//        withJavadocJar()
     }
 
 	javadoc {
@@ -45,7 +42,7 @@ subprojects {
 
 	jar {
 		from(rootProject.file("LICENSE.md")) {
-			rename { "LICENSE_${mod_name}.md" }
+			rename("LICENSE.md", "LICENSE_${mod_name}.md")
 		}
 		manifest {
 			attributes([
@@ -64,7 +61,7 @@ subprojects {
 
 	sourcesJar {
 		from(rootProject.file("LICENSE.md")) {
-			rename { "LICENSE_${mod_name}.md" }
+			rename("LICENSE.md", "LICENSE_${mod_name}.md")
 		}
 	}
 
@@ -72,24 +69,11 @@ subprojects {
 		mavenCentral()
 
 		maven {
-			name = "Sponge"
-			url = "https://repo.spongepowered.org/repository/maven-public"
-			content {
-				includeGroup "org.spongepowered"
-			}
-		}
-
-		maven {
 			name = "ParchmentMC"
 			url = "https://maven.parchmentmc.org"
 			content {
-				includeGroupByRegex "org\\.parchmentmc(\\..*)?"
+				includeGroupAndSubgroups("org.parchmentmc")
 			}
-		}
-
-		maven {
-			name = "Quilt"
-			url = "https://maven.quiltmc.org/repository/release"
 		}
 
 		maven {
@@ -98,8 +82,8 @@ subprojects {
 		}
 
 		maven {
-			name = 'NeoForge'
-			url = 'https://maven.neoforged.net/releases'
+			name = "NeoForge"
+			url = "https://maven.neoforged.net/releases"
 		}
 
 		maven {
@@ -113,25 +97,33 @@ subprojects {
 		}
 
 		maven {
-			name "TerraformersMC"
-			url "https://maven.terraformersmc.com/releases"
+			name = "TerraformersMC"
+			url = "https://maven.terraformersmc.com/releases"
 		}
 
-		maven {
-			name "Modrinth"
-			url "https://api.modrinth.com/maven"
-			content {
+		exclusiveContent {
+			forRepository {
+				maven {
+					name = "Modrinth"
+					url = "https://api.modrinth.com/maven"
+				}
+			}
+			filter {
 				includeGroup "maven.modrinth"
 			}
 		}
 
-        maven {
-            name = "CurseMaven"
-            url = "https://www.cursemaven.com"
-            content {
-                includeGroup "curse.maven"
-            }
-        }
+		exclusiveContent {
+			forRepository {
+				maven {
+					name = "CurseMaven"
+					url = "https://www.cursemaven.com"
+				}
+			}
+			filter {
+				includeGroup "curse.maven"
+			}
+		}
 	}
 
 	tasks.withType(JavaCompile).configureEach {
@@ -140,7 +132,7 @@ subprojects {
 	}
 
 	processResources {
-        filteringCharset "UTF-8"
+        filteringCharset = "UTF-8"
 
 		def expandProps = [
 			"version"                       : version,
@@ -157,10 +149,10 @@ subprojects {
 			"curseforge_id"					: curseforge_id,
 			"modrinth_id"					: modrinth_id,
 
-			"quilt_loader_version"          : quilt.versions.quilt.loader.get(),
+			"fabric_loader_version"          : libs.versions.fabric.loader.get(),
 		]
 
-		filesMatching(['pack.mcmeta', '*.mod.json', 'META-INF/mods.toml', '*.mixins.json']) {
+		filesMatching(['pack.mcmeta', 'fabric.mod.json', 'META-INF/mods.toml', '*.mixins.json']) {
 			expand expandProps
 		}
 		inputs.properties(expandProps)
@@ -176,7 +168,7 @@ subprojects {
     publishing {
         publications {
             "mavenJava${project.name}"(MavenPublication) {
-				artifactId "${rootProject.name}-${project.name}"
+				artifactId = "${rootProject.name}-${project.name}"
 				from components.java
 			}
         }

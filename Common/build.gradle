@@ -1,19 +1,30 @@
 plugins {
-	alias libs.plugins.vanilla.gradle
+	alias libs.plugins.moddevgradle.legacy
 }
 
-minecraft {
-	version(libs.versions.minecraft.get())
-	if (file("src/main/resources/${mod_id}.accesswidener").exists()) {
-		accessWideners(file("src/main/resources/${mod_id}.accesswidener"))
+legacyForge {
+	mcpVersion = libs.versions.minecraft.get()
+
+	parchment {
+		minecraftVersion = libs.versions.parchment.minecraft.get()
+		mappingsVersion = libs.versions.parchment.mappings.get()
 	}
 }
 
 dependencies {
+	annotationProcessor variantOf(libs.mixin) { classifier 'processor' }
+	annotationProcessor libs.mixinextras.common
+
 	compileOnly libs.bundles.mixin
     compileOnly libs.jetbrains.annotations
 
 	implementation libs.resourcefulconfig
 
-	// compileOnly "${libs.emi.asProvider().get()}:api"
+	// compileOnly variantOf(libs.emi) { classifier 'api' }
+}
+
+mixin {
+	add(sourceSets.main, "${mod_id}.refmap.json")
+
+	config("${mod_id}.mixins.json")
 }

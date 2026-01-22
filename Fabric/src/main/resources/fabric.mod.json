@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "id": "${mod_id}",
+  "version": "${version}",
+  "name": "${mod_display_name}",
+  "description": "${mod_description}",
+  "authors": [
+    {
+      "name": "Up",
+      "contact": {
+        "homepage": "https://upcraft.dev"
+      }
+    }
+  ],
+  "contact": {
+    "homepage": "${homepage_url}",
+    "sources": "${sources_url}",
+    "issues": "${issues_url}"
+  },
+  "license": "${license_url}",
+  "icon": "icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["dev.upcraft.anvilfix.fabric.entrypoints.Main"],
+    "modmenu": ["dev.upcraft.anvilfix.fabric.entrypoints.Modmenu"]
+  },
+  "mixins": [
+    "${mod_id}.mixins.json",
+    "${mod_id}.fabric.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${fabric_loader_version}",
+    "fabric-api": "*",
+    "minecraft": "=${minecraft_version}",
+    "resourcefulconfig": "*"
+  },
+  "custom": {
+    "mc-publish": {
+      "curseforge": "${curseforge_id}",
+      "modrinth": "${modrinth_id}",
+      "loaders": [
+        "fabric",
+        "quilt"
+      ],
+      "dependencies": [
+        "fabric-api(required){modrinth:P7dR8mSH}{curseforge:306612}",
+        "resourcefulconfig(required){modrinth:M1953qlQ}{curseforge:714059}"
+      ]
+    }
+  }
+}
