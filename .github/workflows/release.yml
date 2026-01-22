@@ -135,7 +135,6 @@ jobs:
         with:
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           version: ${{ env.TAG }}+${{ matrix.loader }}
-          version-type: beta
           files: |
             ${{ matrix.loader }}/build/libs/!(*-@(sources|javadoc)).jar
             ${{ matrix.loader }}/build/libs/*-@(sources|javadoc).jar
@@ -146,7 +145,6 @@ jobs:
         with:
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
           version: ${{ env.TAG }}+${{ matrix.loader }}
-          version-type: beta
           files: |
             ${{ matrix.loader }}/build/libs/!(*-@(sources|javadoc)).jar
             ${{ matrix.loader }}/build/libs/*-@(sources|javadoc).jar
@@ -168,4 +166,3 @@ jobs:
           webhook-url: ${{ secrets.ANNOUNCEMENT_WEBHOOK_URL }}
           curseforge-project-id: ${{ needs.publish_platforms.outputs.curseforge_id }}
           modrinth-project-id: ${{ needs.publish_platforms.outputs.modrinth_id }}
-          ping-notification-role: false
