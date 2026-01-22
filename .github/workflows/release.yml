@@ -2,67 +2,170 @@ name: Upload Release Artifacts
 
 on:
   push:
-    tags:
-      - '*'
+    tags: [ '*' ]
+
+env:
+  JAVA_VERSION: 25
+  TAG: ${{ github.ref_name }}
+  BUILD_NUMBER: ${{ github.run_number }}
+  MAVEN_UPLOAD_URL: ${{ secrets.MAVEN_UPLOAD_URL }}
+  MAVEN_UPLOAD_USERNAME: ${{ secrets.MAVEN_UPLOAD_USERNAME }}
+  MAVEN_UPLOAD_PASSWORD: ${{ secrets.MAVEN_UPLOAD_PASSWORD }}
 
 jobs:
-  publish:
+  build:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      attestations: write
+      contents: read
     steps:
-      - uses: actions/checkout@v4
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
+      # Setup
+      - uses: actions/checkout@v6
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v5
         with:
+          java-version: ${{ env.JAVA_VERSION }}
           distribution: 'microsoft'
-          java-version: 17
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
+        with:
+          cache-encryption-key: ${{ secrets.GRADLE_CONFIG_CACHE_ENCRYPTION_KEY }}
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
       - name: Get current time
-        uses: srfrnk/current-time@master
+        uses: srfrnk/current-time@5a4163ad035ccd9a407ec9e519c3b6ba1b633d1e
         id: current-time
         with:
           format: YYYYMMDDHHmmss
-      - name: Setup ENV
-        run: echo "TAG=${{ github.ref_name }}" >> $GITHUB_ENV
-      - name: Copy Maven Upload URL
-        id: extract_maven_upload_url
-        run: echo "maven_upload_url=${{secrets.MAVEN_UPLOAD_URL}}" >> $GITHUB_OUTPUT
-      - name: Grant execute permission for gradlew
-        run: chmod +x ./gradlew
+
+      # Build
       - name: Build with Gradle
         env:
           BUILD_TIME: ${{ steps.current-time.outputs.formattedTime }}
-          BUILD_NUMBER: ${{ github.run_number }}
-        run: ./gradlew assemble
+        run: ./gradlew assemble --rerun-tasks
       - name: Maven Release
-        if: steps.extract_maven_upload_url.outputs.maven_upload_url
+        if: ${{ env.MAVEN_UPLOAD_URL }}
         env:
           BUILD_TIME: ${{ steps.current-time.outputs.formattedTime }}
-          BUILD_NUMBER: ${{ github.run_number }}
-          MAVEN_UPLOAD_URL: ${{ secrets.MAVEN_UPLOAD_URL }}
-          MAVEN_UPLOAD_USERNAME: ${{ secrets.MAVEN_UPLOAD_USERNAME }}
-          MAVEN_UPLOAD_PASSWORD: ${{ secrets.MAVEN_UPLOAD_PASSWORD }}
         run: ./gradlew publish
+
+      # Upload
+      - name: Upload build artifacts (Common)
+        continue-on-error: true
+        uses: actions/upload-artifact@v6
+        with:
+          name: ${{ github.event.repository.name }}-Common-${{ env.TAG }}
+          path: |
+            Common/build/libs/*.jar
+      - name: Upload build artifacts (Fabric)
+        continue-on-error: true
+        uses: actions/upload-artifact@v6
+        with:
+          name: ${{ github.event.repository.name }}-Fabric-${{ env.TAG }}
+          path: |
+            Fabric/build/libs/*.jar
+      - name: Upload build artifacts (Forge)
+        continue-on-error: true
+        uses: actions/upload-artifact@v6
+        with:
+          name: ${{ github.event.repository.name }}-Forge-${{ env.TAG }}
+          path: |
+            Forge/build/libs/*.jar
+      - name: Generate build attestation
+        uses: actions/attest-build-provenance@v3
+        with:
+          subject-path: |
+            **/build/libs/*.jar
+            !**/build/libs/*-sources.jar
+            !**/build/libs/*-javadoc.jar
+
+  publish_github:
+    name: Publish (GitHub Releases)
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download build artifacts (Common)
+        uses: actions/download-artifact@v7
+        with:
+          name: ${{ github.event.repository.name }}-Common-${{ env.TAG }}
+          path: Common/build/libs
+      - name: Download build artifacts (Fabric)
+        uses: actions/download-artifact@v7
+        with:
+          name: ${{ github.event.repository.name }}-Fabric-${{ env.TAG }}
+          path: Fabric/build/libs
+      - name: Download build artifacts (Forge)
+        uses: actions/download-artifact@v7
+        with:
+          name: ${{ github.event.repository.name }}-Forge-${{ env.TAG }}
+          path: Forge/build/libs
       - name: Publish (GitHub Releases)
-        uses: Kir-Antipov/mc-publish@423b200ec84e6eefad726549c72513d7a9b4c2c0 # (new) v3.3
+        id: publish_github
+        uses: Kira-NT/mc-publish@995edadc13559a8b28d0b7e6571229f067ec7659
         with:
           github-token: ${{ github.token }}
           files: |
-            **/build/libs/!(*-@(dev|sources|javadoc|slim)).jar
-            **/build/libs/*-@(sources|javadoc).jar
-      - name: Publish (Forge)
-        uses: Kir-Antipov/mc-publish@423b200ec84e6eefad726549c72513d7a9b4c2c0 # (new) v3.3
+            **/build/libs/*.jar
+
+  publish_platforms:
+    name: Publish (${{ matrix.platform }}, ${{ matrix.loader }})
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [ 'Curseforge', 'Modrinth' ]
+        loader: [ 'Fabric', 'Forge' ]
+    needs: build
+    runs-on: ubuntu-latest
+    outputs:
+      modrinth_id: ${{ steps.store_ids.outputs.Fabric_modrinth_id }}
+      curseforge_id: ${{ steps.store_ids.outputs.Fabric_curseforge_id }}
+    steps:
+      - name: Download build artifacts (${{ matrix.loader }})
+        uses: actions/download-artifact@v7
+        with:
+          name: ${{ github.event.repository.name }}-${{ matrix.loader }}-${{ env.TAG }}
+          path: ${{ matrix.loader }}/build/libs
+      - name: Publish (Modrinth)
+        id: publish_modrinth
+        if: matrix.platform == 'Modrinth'
+        uses: Kira-NT/mc-publish@995edadc13559a8b28d0b7e6571229f067ec7659
         with:
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
-          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
-          version: ${{ github.ref_name }}+Forge
+          version: ${{ env.TAG }}+${{ matrix.loader }}
+          version-type: beta
           files: |
-            Forge/build/libs/!(*-@(dev|sources|javadoc|slim)).jar
-            Forge/build/libs/*-@(sources|javadoc).jar
-      - name: Publish (Fabric)
-        uses: Kir-Antipov/mc-publish@423b200ec84e6eefad726549c72513d7a9b4c2c0 # (new) v3.3
+            ${{ matrix.loader }}/build/libs/!(*-@(sources|javadoc)).jar
+            ${{ matrix.loader }}/build/libs/*-@(sources|javadoc).jar
+      - name: Publish (Curseforge)
+        id: publish_curseforge
+        if: matrix.platform == 'Curseforge'
+        uses: Kira-NT/mc-publish@995edadc13559a8b28d0b7e6571229f067ec7659
         with:
-          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
-          version: ${{ github.ref_name }}+Fabric
+          version: ${{ env.TAG }}+${{ matrix.loader }}
+          version-type: beta
           files: |
-            Fabric/build/libs/!(*-@(dev|sources|javadoc|slim)).jar
-            Fabric/build/libs/*-@(sources|javadoc).jar
+            ${{ matrix.loader }}/build/libs/!(*-@(sources|javadoc)).jar
+            ${{ matrix.loader }}/build/libs/*-@(sources|javadoc).jar
+      - name: Store Platform IDs
+        id: store_ids
+        run: |
+          echo "${{ matrix.loader }}_modrinth_id=${{ steps.publish_modrinth.outputs.modrinth-id }}" >> $GITHUB_OUTPUT
+          echo "${{ matrix.loader }}_curseforge_id=${{ steps.publish_curseforge.outputs.curseforge-id }}" >> $GITHUB_OUTPUT
+
+  notify:
+    name: Notify
+    needs: [ publish_github, publish_platforms ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify Discord
+        uses: Up-Mods/action-discord-release@main
+        with:
+          version: ${{ env.TAG }}
+          webhook-url: ${{ secrets.ANNOUNCEMENT_WEBHOOK_URL }}
+          curseforge-project-id: ${{ needs.publish_platforms.outputs.curseforge_id }}
+          modrinth-project-id: ${{ needs.publish_platforms.outputs.modrinth_id }}
+          ping-notification-role: false
