@@ -19,7 +19,7 @@ public class MixinAnvilMenu {
         return AnvilFixConfig.getGlobalEnchantmentLevelLimit(original);
     }
 
-    @ModifyExpressionValue(method = {"lambda$onTake$2", "method_24922", "m_150476_"}, require = 1, at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/player/Abilities;instabuild:Z"))
+    @ModifyExpressionValue(method = {"lambda$onTake$2", "method_24922", "m_150476_"}, at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/player/Abilities;instabuild:Z"))
     private static boolean anvilfix$stopAnvilBreaking(boolean original) {
         return original || AnvilFixConfig.stopAnvilBreakingOnCraft;
     }
